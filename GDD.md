@@ -163,7 +163,7 @@ Um marco por vez, na ordem, seguindo a "definição de pronto" do CLAUDE.md. Mar
 - [x] **M5 · Casas e relíquias.** Loja, Descanso, Evento, Baú e o efeito das 5 relíquias.
 - [x] **M6 · Chefe e telas.** Gerar o **lote 2**. Rei Slime, Slime Mirim, telas de título, pausa, vitória e derrota.
 - [x] **M7 · Áudio e acabamento.** Sons e músicas, números de dano, tremor de tela leve, flash de dano, transições.
-- [ ] **M8 · Fechamento.** Playtest automático da partida inteira, ajustes de balanceamento, builds para Mac e Windows, README atualizado.
+- [x] **M8 · Fechamento.** Playtest automático da partida inteira, ajustes de balanceamento, builds para Mac e Windows, README atualizado.
 
 ## 13. Expansão (fora do escopo, só se sobrar tempo)
 

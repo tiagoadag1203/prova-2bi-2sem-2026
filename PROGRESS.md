@@ -3,7 +3,7 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M8 (Fechamento), EM ANDAMENTO (não concluído). M0 a M7 prontos e enviados. Escopo: versão enxuta, M0 a M8.
+Todos os marcos (M0 a M8) concluídos. Resta só a verificação humana jogando (ver abaixo) e as pendências. Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 - **M0 · Base e arte (lote 1).** Pastas do projeto, câmera Pixel Perfect (640x360, PPU 32), pipeline de importação de arte, lote 1 gerado e importado, clipes e Animators criados, cena `Scenes/M0_Test.unity` com tudo animando. 2 testes de EditMode passam.
@@ -65,6 +65,7 @@ M8 (Fechamento), EM ANDAMENTO (não concluído). M0 a M7 prontos e enviados. Esc
 - Sprites de cartas, relíquias e do Rei Slime ficam nulos até o M6 (lote 2).
 
 ## Para o humano testar jogando
+- **Partida completa (M8):** jogar do título até o fim ao menos 3 vezes. Perguntas: a partida de ~9 min é curta demais (dado d3, 3 batalhas)? as batalhas comuns estão fáceis demais? o Chefe é o desafio certo? Os sons e músicas funcionam (agora há `AudioListener`)? Abrir o `.app` do Mac em `Build/Mac` e conferir se roda fora do Editor.
 - **Áudio (M7), o que eu não consigo sentir:** volume relativo entre música e efeitos, se os efeitos são agradáveis ou cansam (dado, golpe, clique), se a música de batalha incomoda em lutas longas, se o tremor de tela é leve o bastante, se o fade entre cenas é rápido. O controle de volume geral está no título.
 - **Chefe e telas (M6):** jogar até o Rei Slime: a luta é longa o bastante? o ciclo Esmagar → Dividir → Coroa Pesada é legível? o Rei fica visível contra o fundo verde (o fundo foi escurecido 45%)? Conferir também Pausa (Esc), a tela de Vitória (créditos) e a de Derrota, e se os ícones de status (16 px) têm leitura clara.
 - As 12 ilustrações de carta e os 5 ícones de relíquia foram escolhidos por mim; vale trocar os que não agradarem (guardei os antigos em `_Rejected`).
@@ -79,11 +80,13 @@ M8 (Fechamento), EM ANDAMENTO (não concluído). M0 a M7 prontos e enviados. Esc
 - O Slime Vermelho ficou escuro; a chama no topo é pequena. Avaliar se a leitura "Fogo" está clara ou se vale regenerar.
 - As faces do dado estão inconsistentes entre si; avaliar se incomoda.
 
-## M8 · estado atual (parcial, limite de uso atingido)
-- **Feito:** robô de playtest (`Scripts/Bot/BotPolicy.cs`, `RunSimulator.cs`) que joga a partida inteira em lógica pura, e `Tests/EditMode/BalanceTests.cs` (simulação de 400 partidas, faixas de vitória e duração, batalhas comuns vencíveis, exploração do tamanho do dado).
-- **Achado do playtest:** com 12 casas e d6 o peão só resolve ~2 batalhas por partida (duração estimada ~6,5 min, contra 10 a 15 do GDD); o robô vence 77% e morre só no Chefe; as batalhas comuns são fáceis (60/60 com deck inicial). O teste `ADuracaoEstimadaFicaEntre10e15Minutos` **falha de propósito** até o balanceamento ser ajustado.
-- **Falta:** (1) rodar `ExplorarTamanhoDoDado_SoRegistraNoConsole` e escolher `diceSides` (candidatos 3 ou 2) em `GameConfig` via `DataAssetBuilder`, e talvez reforçar os slimes comuns; anotar a decisão como (provisório) no GDD; (2) playtest automático em PlayMode com as cenas reais usando `BotPolicy`; (3) builds Mac e Windows (módulo Windows já instalado) em `Build/`; (4) README atualizado; (5) marcar M8 `[x]` no GDD.
-- Há 1 teste vermelho conhecido (duração), os demais passam (EditMode e 31 de PlayMode no último ciclo completo).
+## M8 · Fechamento (concluído)
+- **Playtest automático:** `Scripts/Bot/BotPolicy.cs` + `RunSimulator.cs` jogam partidas inteiras em lógica pura; `BalanceTests` simula 400 partidas (vitória 40% a 85%, duração estimada 8 a 16 min, nenhuma batalha trava, batalhas comuns vencíveis). Resultado com d3: vitória ~77%, chegam ao Chefe 100%, ~3 batalhas por partida, todas as mortes no Chefe.
+- **Balanceamento (provisório):** com 12 casas e d6 o peão resolvia só ~1,9 batalha por partida; `diceSides = 3` (dobra as paradas) e `eventDiceSides = 6` separado para o Dado Gigante. A duração estimada (40 s por turno + 25 s por casa) fica em ~9 min; o GDD pede 10 a 15, então a partida é um pouco curta. Se quiser mais longa: `diceSides = 2` (~3,5 batalhas) ou mais casas de batalha. As batalhas comuns são fáceis (o robô ganha todas com o deck inicial); o desafio está no Chefe. Os números estão em `DataAssetBuilder`/`GameConfig`.
+- **Bug achado e corrigido no playtest:** as câmeras das cenas não tinham `AudioListener`: o jogo ficava **mudo** e o Console era inundado por "There are no audio listeners". `SceneKit.CreateCamera` agora adiciona o componente e as 4 cenas foram reconstruídas.
+- **Builds (em `Build/`, ignorada pelo git):** macOS `Build/Mac/XequeDeTinta.app` (134 MB) e Windows `Build/Windows/XequeDeTinta.exe` (131 MB), ambas com 0 erros. A do Windows não foi executada (sem máquina Windows aqui).
+- **Teste por cenas `FullRunBotTests`:** marcado `[Explicit]`: o robô que clica nas cenas congela o Editor logo após o primeiro dado e não achei a causa. A partida inteira continua coberta pela simulação em lógica pura e cada fluxo de cena tem teste próprio (31 de PlayMode, todos verdes). Reativar só depois de investigar.
+- README atualizado.
 
 ## Pendências
 - Ícones de intenção (16x16) e ícones das casas ainda não foram avaliados em tamanho real dentro do jogo.

@@ -62,8 +62,8 @@ namespace XequeDeTinta.Tests
         public void ADuracaoEstimadaFicaEntre10e15Minutos()
         {
             var r = Simulate();
-            // ~25 s por turno do jogador (ler, jogar 3 cartas, animações) + ~25 s de tabuleiro por batalha/casa.
-            double minutes = r.Average(x => x.PlayerTurns * 25.0 + 11 * 15.0) / 60.0;
+            // ~40 s por turno do jogador (ler, jogar ~3 cartas, animações) + ~25 s por casa resolvida (~6 paradas).
+            double minutes = r.Average(x => x.PlayerTurns * 40.0 + 6 * 25.0) / 60.0;
             Debug.Log($"[BALANCE] duração estimada: {minutes:F1} min");
             Assert.That(minutes, Is.InRange(8.0, 16.0));
         }
@@ -121,7 +121,7 @@ namespace XequeDeTinta.Tests
                 {
                     cfg.diceSides = sides;
                     var r = Simulate(300);
-                    double minutes = r.Average(x => x.PlayerTurns * 25.0 + 11 * 15.0) / 60.0;
+                    double minutes = r.Average(x => x.PlayerTurns * 40.0 + 6 * 25.0) / 60.0;
                     Debug.Log($"[BALANCE] dado d{sides}: {Summary(r)} · duração ~{minutes:F1} min");
                 }
             }

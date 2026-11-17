@@ -167,7 +167,7 @@ namespace XequeDeTinta.Core
                     res.RemoveCardPending = true;
                     break;
                 case EventOutcomeKind.DiceGamble:
-                    int roll = r.Rng.Range(1, r.Config.diceSides + 1);
+                    int roll = r.Rng.Range(1, r.Config.eventDiceSides + 1);
                     res.Lines.Add($"O dado gigante rola e para no {roll}.");
                     if (roll <= 2) LoseHp(r, o.value, res);
                     else if (roll <= 4) { r.AddCoins(o.value2); res.Lines.Add($"Você ganha {o.value2} moedas."); }

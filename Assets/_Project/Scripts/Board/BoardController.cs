@@ -40,6 +40,9 @@ namespace XequeDeTinta.Board
         public event Action DeckRequested;
 
         public BoardState State { get; private set; } = BoardState.Idle;
+        /// <summary>Opções da bifurcação atual (para o robô de playtest).</summary>
+        public IReadOnlyList<int> PendingOptions => mover != null ? mover.Options : null;
+        public BoardGraph Graph => graph;
         public BoardProgress Progress { get; private set; }
         public int LastRoll { get; private set; }
         public int CurrentTileId => Progress.CurrentTile;

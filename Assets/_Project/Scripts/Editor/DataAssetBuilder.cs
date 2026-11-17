@@ -26,6 +26,8 @@ namespace XequeDeTinta.EditorTools
             var board = BuildBoard();
 
             var cfg = LoadOrCreate<GameConfig>(Root + "GameConfig.asset");
+            cfg.diceSides = 3;          // (provisório) com d6 o peão resolvia só ~2 casas; ver PROGRESS.md
+            cfg.eventDiceSides = 6;
             cfg.starterDeck = new List<CardData>();
             Add(cfg.starterDeck, cards["golpe"], 5);
             Add(cfg.starterDeck, cards["defender"], 4);

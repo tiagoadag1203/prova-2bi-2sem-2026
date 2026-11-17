@@ -19,7 +19,9 @@ namespace XequeDeTinta.Data
         public int burnDamage = 2;
 
         [Header("Tabuleiro")]
-        public int diceSides = 6;
+        public int diceSides = 3;
+        /// <summary>Dado do evento Dado Gigante (1-2, 3-4, 5-6).</summary>
+        public int eventDiceSides = 6;
         public float restHealFraction = 0.3f;
 
         [Header("Recompensas")]

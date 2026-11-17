@@ -21,6 +21,7 @@ namespace XequeDeTinta.EditorTools
             ColorUtility.TryParseHtmlString("#2A1B3D", out var bg);
             cam.backgroundColor = bg;
             go.transform.position = new Vector3(0, 0, -10);
+            go.AddComponent<AudioListener>();   // sem ele o jogo fica mudo e o Console enche de avisos
             go.AddComponent<UniversalAdditionalCameraData>();
             var ppc = go.AddComponent<PixelPerfectCamera>();
             ppc.assetsPPU = 32;

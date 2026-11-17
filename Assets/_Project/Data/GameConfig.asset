@@ -29,7 +29,8 @@ MonoBehaviour:
   effectiveMultiplier: 1.5
   weakMultiplier: 0.75
   burnDamage: 2
-  diceSides: 6
+  diceSides: 3
+  eventDiceSides: 6
   restHealFraction: 0.3
   rewardCoinsMin: 10
   rewardCoinsMax: 15
