@@ -268,7 +268,8 @@ namespace XequeDeTinta.Board
                 for (int i = 0; i < markers.Count; i++)
                 {
                     var p = markers[i].position;
-                    p.y = graph.Get(mover.Options[i]).position.y + 0.95f + Mathf.Sin(Time.time * 6f) * 0.08f;
+                    p.x = graph.Get(mover.Options[i]).position.x;
+                    p.y = graph.Get(mover.Options[i]).position.y + 0.8f + Mathf.Sin(Time.time * 6f) * 0.08f;
                     markers[i].position = p;
                 }
                 if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && cam != null)

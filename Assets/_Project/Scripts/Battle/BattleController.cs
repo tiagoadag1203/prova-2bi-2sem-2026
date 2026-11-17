@@ -254,7 +254,7 @@ namespace XequeDeTinta.Battle
         /// <summary>Pilha de cartas (Compra/Descarte): caixa com rótulo e número grande.</summary>
         TextMeshProUGUI BuildPile(string name, string label, Vector2 anchor, Vector2 pos)
         {
-            var box = UIFactory.Anchored("Pilha" + name, frame, anchor, new Vector2(56, 38), pos);
+            var box = UIFactory.Anchored("Pilha" + name, frame, anchor, new Vector2(74, 38), pos);
             var border = box.gameObject.AddComponent<Image>(); border.color = Palette.Gold; border.raycastTarget = false;
             var inner = UIFactory.Rect("Fundo", box, Vector2.zero, Vector2.one, new Vector2(2, 2), new Vector2(-2, -2));
             var bg = inner.gameObject.AddComponent<Image>(); bg.color = Palette.Purple; bg.raycastTarget = false;
