@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5be4de53106c4c14bb460acb62d1c85, type: 3}
+  m_Name: Event_DadoGigante
+  m_EditorClassIdentifier: XequeDeTinta.Runtime::XequeDeTinta.Data.EventData
+  id: dado_gigante
+  title: Dado Gigante
+  body: Um dado enorme descansa sobre a casa. Dizem que ele decide o destino de quem
+    o rola.
+  choiceA:
+    text: "Rolar (1-2 perde 8 de vida, 3-4 ganha 30 moedas, 5-6 ganha 1 rel\xEDquia)"
+    outcomes:
+    - kind: 7
+      value: 8
+      value2: 30
+  choiceB:
+    text: "N\xE3o rolar"
+    outcomes:
+    - kind: 0
+      value: 0
+      value2: 0

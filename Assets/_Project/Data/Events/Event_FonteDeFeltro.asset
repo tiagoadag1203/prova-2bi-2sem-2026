@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5be4de53106c4c14bb460acb62d1c85, type: 3}
+  m_Name: Event_FonteDeFeltro
+  m_EditorClassIdentifier: XequeDeTinta.Runtime::XequeDeTinta.Data.EventData
+  id: fonte_de_feltro
+  title: Fonte de Feltro
+  body: "Uma fonte de feltro macio pulsa com uma luz tranquila. Voc\xEA sente que
+    ela pode curar ou desfazer algo."
+  choiceA:
+    text: Beber (cura 12)
+    outcomes:
+    - kind: 2
+      value: 12
+      value2: 0
+  choiceB:
+    text: Remover 1 carta do deck
+    outcomes:
+    - kind: 6
+      value: 0
+      value2: 0

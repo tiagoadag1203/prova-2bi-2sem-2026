@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a441f63c8547c44aba9687daa6f900b8, type: 3}
+  m_Name: Enemy_ReiSlime
+  m_EditorClassIdentifier: XequeDeTinta.Runtime::XequeDeTinta.Data.EnemyData
+  id: rei_slime
+  displayName: Rei Slime
+  element: 2
+  maxHp: 70
+  behavior: 3
+  actions:
+  - name: Esmagar
+    intent: 0
+    damage: 12
+    shield: 0
+    burnTurns: 0
+    heal: 0
+    summonCount: 0
+    strength: 0
+  - name: Dividir
+    intent: 4
+    damage: 0
+    shield: 0
+    burnTurns: 0
+    heal: 0
+    summonCount: 2
+    strength: 0
+  - name: Coroa Pesada
+    intent: 0
+    damage: 6
+    shield: 8
+    burnTurns: 0
+    heal: 0
+    summonCount: 0
+    strength: 0
+  specialEveryN: 0
+  enrageBelowHpFraction: 0.5
+  enrageStrength: 2
+  summonedEnemy: {fileID: 11400000, guid: ef7e47ec359e3401982ca08b578fee82, type: 2}
+  summonMaxAlive: 2
+  sprite: {fileID: 0}
+  spriteScale: 1
+  animator: {fileID: 0}
+  isBoss: 1

@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7211cd022089453197eff3af7c6e111, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: XequeDeTinta.Runtime::XequeDeTinta.Data.GameConfig
+  heroMaxHp: 50
+  starterDeck:
+  - {fileID: 11400000, guid: 89148acc7569e40408897ed008c56a00, type: 2}
+  - {fileID: 11400000, guid: 89148acc7569e40408897ed008c56a00, type: 2}
+  - {fileID: 11400000, guid: 89148acc7569e40408897ed008c56a00, type: 2}
+  - {fileID: 11400000, guid: 89148acc7569e40408897ed008c56a00, type: 2}
+  - {fileID: 11400000, guid: 89148acc7569e40408897ed008c56a00, type: 2}
+  - {fileID: 11400000, guid: cd32dbd3a289c4998a09360f59862f19, type: 2}
+  - {fileID: 11400000, guid: cd32dbd3a289c4998a09360f59862f19, type: 2}
+  - {fileID: 11400000, guid: cd32dbd3a289c4998a09360f59862f19, type: 2}
+  - {fileID: 11400000, guid: cd32dbd3a289c4998a09360f59862f19, type: 2}
+  - {fileID: 11400000, guid: 40635591e6878409d86297fc5e206687, type: 2}
+  energyPerTurn: 3
+  handSize: 5
+  effectiveMultiplier: 1.5
+  weakMultiplier: 0.75
+  burnDamage: 2
+  diceSides: 6
+  restHealFraction: 0.3
+  rewardCoinsMin: 10
+  rewardCoinsMax: 15
+  rewardCardChoices: 3
+  chestCoins: 30
+  shopCardCount: 3
+  shopCardPrice: 50
+  shopRelicPrice: 100
+  shopHealAmount: 15
+  shopHealPrice: 35
+  shopRemoveCardPrice: 60
+  rewardPool:
+  - {fileID: 11400000, guid: 678d2a022dd0746e0822d24648c747f8, type: 2}
+  - {fileID: 11400000, guid: cf94af3251df0426cbc265cfa2eb33e3, type: 2}
+  - {fileID: 11400000, guid: b8d079fa233e34a1cb650b4409a1a413, type: 2}
+  - {fileID: 11400000, guid: 898d7efec2370448b8530b09cbec5f54, type: 2}
+  - {fileID: 11400000, guid: f78257dd03c864c0c93ff0c654581778, type: 2}
+  - {fileID: 11400000, guid: c7354279676ae4108980c10af6b3912f, type: 2}
+  - {fileID: 11400000, guid: 7acc28ceed7f64d9dbd820e47de62190, type: 2}
+  - {fileID: 11400000, guid: 7fb0da7febc584cd0b81c89d9f79cf0c, type: 2}
+  - {fileID: 11400000, guid: b4a0790e64719416baa2a63a6858a102, type: 2}
+  relics:
+  - {fileID: 11400000, guid: 572df67d66674459f881f95c516fd209, type: 2}
+  - {fileID: 11400000, guid: 9bb20b0affa91495fbee5219d6deafed, type: 2}
+  - {fileID: 11400000, guid: 873ac13819f554a8b95301799e84c76e, type: 2}
+  - {fileID: 11400000, guid: 1189cbd82bdf14c11a7da77d65f6189e, type: 2}
+  - {fileID: 11400000, guid: 64213a676862149bebbedf0bd0dbaa3f, type: 2}
+  battleEncounters:
+  - {fileID: 11400000, guid: ce07012209447472eb09f85291e4dbf4, type: 2}
+  - {fileID: 11400000, guid: dcf8fc890ba2e43c2b1656d69bcc8e88, type: 2}
+  - {fileID: 11400000, guid: be72d179a09e741689cb3f63222b5c60, type: 2}
+  - {fileID: 11400000, guid: 70369dd8ed289495db5764e83ab24841, type: 2}
+  - {fileID: 11400000, guid: 7dababa96c334428a9a383d0e4c88fc8, type: 2}
+  bossEncounter: {fileID: 11400000, guid: 8978d605908654e2990544f6723b84df, type: 2}
+  events:
+  - {fileID: 11400000, guid: 2117a9314828845b4b5e676810cd9900, type: 2}
+  - {fileID: 11400000, guid: 0eeab9be74f0144e58ad56dd619f3f85, type: 2}
+  - {fileID: 11400000, guid: 912b7ed207a2c4208b39683fb60c2457, type: 2}
+  board: {fileID: 11400000, guid: bfc89d83982254165be90169d1da9137, type: 2}

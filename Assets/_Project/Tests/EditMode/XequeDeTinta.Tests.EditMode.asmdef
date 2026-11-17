@@ -3,7 +3,9 @@
     "rootNamespace": "XequeDeTinta.Tests",
     "references": [
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "XequeDeTinta.Runtime",
+        "XequeDeTinta.Editor"
     ],
     "includePlatforms": [
         "Editor"

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24a856c69a2aa4e099b94a4114b41973, type: 3}
+  m_Name: Relic_BaseDeChumbo
+  m_EditorClassIdentifier: XequeDeTinta.Runtime::XequeDeTinta.Data.RelicData
+  id: base_de_chumbo
+  displayName: Base de Chumbo
+  description: "Come\xE7a toda batalha com 5 de escudo."
+  kind: 1
+  value: 5
+  icon: {fileID: 0}

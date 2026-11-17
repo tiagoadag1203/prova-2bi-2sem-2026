@@ -3,10 +3,11 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M1 (Dados), a iniciar. Escopo: versão enxuta, M0 a M8.
+M2 (Tabuleiro), a iniciar. Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 - **M0 · Base e arte (lote 1).** Pastas do projeto, câmera Pixel Perfect (640x360, PPU 32), pipeline de importação de arte, lote 1 gerado e importado, clipes e Animators criados, cena `Scenes/M0_Test.unity` com tudo animando. 2 testes de EditMode passam.
+- **M1 · Dados.** ScriptableObjects `CardData`, `EnemyData`, `EncounterData`, `RelicData`, `EventData`, `BoardLayout` e `GameConfig` (todos os números de balanceamento) em `Scripts/Data`. Assets criados pelo menu `Xeque > M1 > Criar assets de dados` (idempotente): 12 cartas, 5 inimigos, 6 encontros, 5 relíquias, 3 eventos, 1 tabuleiro e o `GameConfig`. 21 testes de EditMode passam (19 de dados, conferindo cada número contra o GDD).
 
 ## Decisões tomadas
 - **Pixel Perfect Camera** vem embutida no URP 17 (`UnityEngine.Rendering.Universal.PixelPerfectCamera`). Nenhum pacote novo foi instalado; `Packages/` e `ProjectSettings/` não foram alterados.
@@ -16,6 +17,13 @@ M1 (Dados), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **Quadros de "dado rolando":** não foram gerados. O dado vai girar por código (alternando faces com tremor), o que poupa gerações. As 6 faces vieram como pedidos separados e variam um pouco de ângulo e tamanho.
 - **Casas "visitadas":** serão o mesmo sprite dessaturado por código no M2.
 - Peão de referência de estilo: variação A (v3, 8 direções, só a leste foi animada). Variação B (humanoide de camisa vermelha) em `Art/_Rejected/`.
+
+- **Assemblies:** `Scripts/XequeDeTinta.Runtime.asmdef` (código do jogo), `Scripts/Editor/XequeDeTinta.Editor.asmdef` e `Tests/EditMode/XequeDeTinta.Tests.EditMode.asmdef`, necessários para os testes enxergarem o código. Isso não mexe em pacotes nem em `ProjectSettings/`. O `PixelPerfectCamera` está no assembly `Unity.RenderPipelines.Universal.2D.Runtime`.
+- **Efeitos de carta como dados:** `CardData` guarda uma lista de `EffectSpec` (tipo, valor, repetições). No M3 cada tipo vira uma classe pequena (`DealDamage`, `GainShield`, `ApplyBurn`...) criada por uma fábrica. Nos status (Queimadura, Fraco) `value` são os turnos.
+- **IA dos inimigos como dados:** `EnemyData` tem `EnemyBehaviorKind` (Simple, RandomNoRepeatDefend, EveryNthSpecial, Cycle) mais a lista de ações; o Rei Slime usa Cycle, `enrage*` (Força abaixo de 50%) e `summonedEnemy`/`summonMaxAlive`.
+- **Layout do tabuleiro (provisório):** linha reta de 12 casas com bifurcações nas casas 2 (Batalha ou Descanso) e 6 (Batalha ou Baú), que se juntam nas casas 5 e 9. Posições em unidades de mundo, ajustáveis no asset.
+- **Textos dos eventos** escritos por mim (provisório), com as escolhas do GDD.
+- Sprites de cartas, relíquias e do Rei Slime ficam nulos até o M6 (lote 2).
 
 ## Para o humano testar jogando
 - Abrir `Scenes/M0_Test.unity` e dar Play: conferir se Peão e slimes têm silhueta legível em tamanho real e se o ritmo das animações (8 quadros/s) está bom.
