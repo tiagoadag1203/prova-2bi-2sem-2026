@@ -44,6 +44,21 @@ namespace XequeDeTinta.Battle
         // Animation Event ao fim do clipe de morte.
         public void OnDeathEnd() { if (gameObject.activeInHierarchy) StartCoroutine(Fade()); }
 
+        /// <summary>Pisca o sprite numa cor (dano recebido).</summary>
+        public void Flash(Color color, float seconds = 0.12f)
+        {
+            if (Dead || !gameObject.activeInHierarchy) return;
+            StartCoroutine(FlashRoutine(color, seconds));
+        }
+
+        IEnumerator FlashRoutine(Color color, float seconds)
+        {
+            Renderer.color = color;
+            float t = 0f;
+            while (t < seconds) { t += Time.deltaTime; yield return null; }
+            if (!Dead) Renderer.color = Color.white;
+        }
+
         public void PlayAttack() => Trigger("attack");
         public void PlayTrigger(string name) => Trigger(name);
         public void PlayHit() { if (!Dead) Trigger("hit"); }

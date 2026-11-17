@@ -21,6 +21,7 @@ namespace XequeDeTinta.UI
             var gm = GameManager.Ensure(config);
             Won = gm.LastRunWon ?? false;
             Time.timeScale = 1f;
+            Core.AudioManager.Play(Won ? Core.Sfx.Win : Core.Sfx.Lose);
 
             if (background != null)
             {

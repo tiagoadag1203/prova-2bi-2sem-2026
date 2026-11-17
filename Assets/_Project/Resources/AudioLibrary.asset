@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aac9457c8d6e4ac08c78edf06d987ae, type: 3}
+  m_Name: AudioLibrary
+  m_EditorClassIdentifier: XequeDeTinta.Runtime::XequeDeTinta.Core.AudioLibrary
+  dice: {fileID: 8300000, guid: 4492eb85622e54eb59d2e3d1d35a9d36, type: 3}
+  step: {fileID: 8300000, guid: a166c402c9c0d4b2f8416ffec2dc19a9, type: 3}
+  card: {fileID: 8300000, guid: fcd7ff29b65fe44e7b58d82ab965cf40, type: 3}
+  hit: {fileID: 8300000, guid: cbe03b7a421b046d2ba90110c33bc2eb, type: 3}
+  hitEffective: {fileID: 8300000, guid: e41467aaecee94894b43d49c4ce65743, type: 3}
+  shield: {fileID: 8300000, guid: 6a74a86fd312b454d85f5afdec895363, type: 3}
+  heal: {fileID: 8300000, guid: aefbe3ddd740a4d34890aa101a32121a, type: 3}
+  burn: {fileID: 8300000, guid: ff936a2a7dedf4eb6ad94cf756486093, type: 3}
+  die: {fileID: 8300000, guid: 911edcb66ce214ccd87d1ad8e0af9024, type: 3}
+  hurt: {fileID: 8300000, guid: f5ad22ce6755341e6be9ae44bf378c78, type: 3}
+  coin: {fileID: 8300000, guid: 311f1b5f6c0a14919beefb0ee2bc957e, type: 3}
+  click: {fileID: 8300000, guid: 1c10edd14ed414e80bebe82cf348fd73, type: 3}
+  win: {fileID: 8300000, guid: c753b48ffa1a34083929146504d594c0, type: 3}
+  lose: {fileID: 8300000, guid: 48384e1faf6f74d959a414ac79e385ca, type: 3}
+  summon: {fileID: 8300000, guid: 466edfcefc9f448c3821b7a763eeb1eb, type: 3}
+  musicBoard: {fileID: 8300000, guid: 1d56895f4124d4bea89f7bf588d2f108, type: 3}
+  musicBattle: {fileID: 8300000, guid: 4676c28f8972f44599f5e8341366c41f, type: 3}

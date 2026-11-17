@@ -42,6 +42,17 @@ namespace XequeDeTinta.Core
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            ScreenFader.Get();
+            AudioManager.Ensure();
+        }
+
+        /// <summary>Carrega a cena com um fade curto de saída (a entrada clareia sozinha).</summary>
+        public void Load(string scene) => StartCoroutine(LoadRoutine(scene));
+
+        System.Collections.IEnumerator LoadRoutine(string scene)
+        {
+            yield return ScreenFader.Get().FadeOut();
+            SceneManager.LoadScene(scene);
         }
 
         void OnDestroy() { if (Instance == this) Instance = null; }
@@ -58,13 +69,13 @@ namespace XequeDeTinta.Core
         public void StartRun()
         {
             NewRun();
-            SceneManager.LoadScene("Board");
+            Load("Board");
         }
 
         public void BackToTitle()
         {
             Run = null;
-            SceneManager.LoadScene("Title");
+            Load("Title");
         }
 
         // ---------- Batalha ----------
@@ -86,7 +97,7 @@ namespace XequeDeTinta.Core
             };
             BattleLauncher.SpeedOverride = BattleSpeed;
             BattleLauncher.OnFinished = r => OnBattleFinished(r, tile);
-            SceneManager.LoadScene("Battle");
+            Load("Battle");
         }
 
         void OnBattleFinished(BattleResult result, BoardTile tile)
@@ -96,7 +107,7 @@ namespace XequeDeTinta.Core
             if (!result.Won) { EndRun(false); return; }
             if (tile.type == TileType.Boss) { EndRun(true); return; }
             Run.Reward = Run.RollReward();
-            SceneManager.LoadScene("Board");
+            Load("Board");
         }
 
         /// <summary>Fim da partida. No M6 isto carrega a cena End (vitória ou derrota); por ora volta ao título.</summary>
@@ -104,7 +115,7 @@ namespace XequeDeTinta.Core
         {
             LastRunWon = won;
             Run = null;
-            SceneManager.LoadScene(Application.CanStreamedLevelBeLoaded("End") ? "End" : "Title");
+            Load(Application.CanStreamedLevelBeLoaded("End") ? "End" : "Title");
         }
     }
 }

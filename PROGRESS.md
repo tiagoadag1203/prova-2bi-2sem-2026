@@ -3,7 +3,7 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M7 (Áudio e acabamento), a iniciar. Escopo: versão enxuta, M0 a M8.
+M8 (Fechamento), a iniciar. Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 - **M0 · Base e arte (lote 1).** Pastas do projeto, câmera Pixel Perfect (640x360, PPU 32), pipeline de importação de arte, lote 1 gerado e importado, clipes e Animators criados, cena `Scenes/M0_Test.unity` com tudo animando. 2 testes de EditMode passam.
@@ -18,6 +18,8 @@ M7 (Áudio e acabamento), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **M5 · Casas e relíquias.** Descanso (curar 30% ou melhorar 1 carta com seletor), Loja (3 cartas a 50, 1 relíquia a 100, cura 15 por 35, remover carta por 60; comprado some), Evento (os 3 eventos do GDD, com a escolha e o resultado em texto), Baú (30 moedas e 1 relíquia), tudo em painéis sobre o tabuleiro. As 5 relíquias funcionam: Base de Chumbo, Pincel Afiado, Ampulheta de Bolso e Tinta Seca como ganchos `IBattleHook` na batalha, e Dado Viciado no tabuleiro (botões "Andar" e "Rolar de novo"). Barra de relíquias no HUD com tooltip. Regras em C# puro (`RestLogic`, `ChestLogic`, `Shop`, `EventLogic`); painéis em `UI/TilePanels.cs`. 35 testes de EditMode novos (relíquias, descanso, baú, loja, eventos) e 10 de PlayMode novos clicando nos botões reais. Screenshot em `Docs/screenshots/m5_loja.png`.
 
 - **M6 · Chefe e telas (lote 2 de arte).** Rei Slime 64x64 com idle, attack, summon, hit e death; layout próprio de batalha (Rei à esquerda, 2 Mirins à direita), intenção sobre ele. Ícones de status (escudo, queimadura, fraco, força, atordoado) no lugar do texto, ícones de elemento nas cartas, ilustração em cada uma das 12 cartas, ícones das 5 relíquias, moeda, orbe de energia, fundos de tabuleiro e batalha, logo. Telas: Título (logo, Jogar, Sair, volume), Pausa (Esc: Continuar, Voltar ao título, nas cenas Board e Battle), `End` com Vitória (história curta e créditos) e Derrota (Tentar de novo / Voltar ao título). 16 testes de EditMode de arte e 7 de PlayMode (chefe até a vitória, derrota, pausa, título). Screenshots em `Docs/screenshots/m6_chefe.png` e `m6_titulo.png`.
+
+- **M7 · Áudio e acabamento.** 15 efeitos (dado, passo, carta, golpe, golpe eficaz, escudo, cura, queimadura, inimigo morre, herói ferido, moedas, clique de botão, vitória, derrota, invocação) e 2 músicas em loop (tabuleiro/título/fim e batalha/chefe), ligados por `AudioManager` (efeitos em pool de 8 fontes; música troca por cena) e `AudioLibrary`. Acabamento: tremor de tela leve em passos de 1 pixel quando o herói apanha, flash vermelho/branco no alvo, fade preto entre cenas (`ScreenFader`), botões com clique sonoro. Números de dano flutuantes já vinham do M3. Screenshot em `Docs/screenshots/m7_tabuleiro.png`. 5 testes de EditMode de áudio e 1 de PlayMode (música por cena, fade).
 
 ## Decisões tomadas
 - **Pixel Perfect Camera** vem embutida no URP 17 (`UnityEngine.Rendering.Universal.PixelPerfectCamera`). Nenhum pacote novo foi instalado; `Packages/` e `ProjectSettings/` não foram alterados.
@@ -58,9 +60,12 @@ M7 (Áudio e acabamento), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **Pausa:** `PauseMenu` congela o tempo (`Time.timeScale = 0`); Esc que cancela o alvo de uma carta não pausa.
 - **Fim de partida:** `GameManager.EndRun` agora carrega `End` (Vitória ou Derrota).
 - **Download de imagens do PixelLab:** conferir sempre o final do PNG (`IEND`); um download longo pode truncar o arquivo (aconteceu com `bg_battle.png`, refeito).
+- **Áudio sintetizado, não baixado:** o PixelLab só gera som/música no plano nível 2 (pago; o projeto está no nível 1) e não consegui fontes CC0 confiáveis sem navegar na web. Os sons são originais (chiptune) gerados por `Tools/gen_audio.py` (stdlib), CC0, registrados em `Assets/_Project/Audio/LICENSES.md` junto da licença da fonte. A música é simples (2 loops de ~40 s e ~27 s); trocar por faixas melhores é só substituir os `.wav` e rodar `Xeque > M7 > Preencher AudioLibrary`.
+- `AudioLibrary` precisa ficar no arquivo `AudioLibrary.cs` (o Unity só acha o script de um ScriptableObject pelo nome do arquivo).
 - Sprites de cartas, relíquias e do Rei Slime ficam nulos até o M6 (lote 2).
 
 ## Para o humano testar jogando
+- **Áudio (M7), o que eu não consigo sentir:** volume relativo entre música e efeitos, se os efeitos são agradáveis ou cansam (dado, golpe, clique), se a música de batalha incomoda em lutas longas, se o tremor de tela é leve o bastante, se o fade entre cenas é rápido. O controle de volume geral está no título.
 - **Chefe e telas (M6):** jogar até o Rei Slime: a luta é longa o bastante? o ciclo Esmagar → Dividir → Coroa Pesada é legível? o Rei fica visível contra o fundo verde (o fundo foi escurecido 45%)? Conferir também Pausa (Esc), a tela de Vitória (créditos) e a de Derrota, e se os ícones de status (16 px) têm leitura clara.
 - As 12 ilustrações de carta e os 5 ícones de relíquia foram escolhidos por mim; vale trocar os que não agradarem (guardei os antigos em `_Rejected`).
 - **Casas (M5):** jogar uma partida inteira passando por Loja, Descanso, Evento (os dois sorteados) e Baú. Conferir se os painéis cabem e leem bem, se os preços (50/100/35/60) fazem sentido com as moedas que você junta (10 a 15 por batalha, 30 no baú), se vale a pena a cura de 30% contra melhorar uma carta e se cada relíquia é perceptível na batalha (Base de Chumbo e Pincel Afiado aparecem como "Esc 5" e "Forç 1" na vida do herói).

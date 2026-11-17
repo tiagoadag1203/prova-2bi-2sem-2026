@@ -511,6 +511,7 @@ namespace XequeDeTinta.Battle
             Busy = true;
             var card = Sys.Deck.Hand[handIndex];
             var play = Sys.PlayCard(handIndex, targetIndex);
+            AudioManager.Play(Sfx.Card);
             RefreshAll();
 
             if (HasHostileEffect(card)) yield return WaitImpact(heroView);
@@ -594,28 +595,59 @@ namespace XequeDeTinta.Battle
                         if (e.amount > 0)
                         {
                             views[e.target].PlayHit();
+                            views[e.target].Flash(e.target is Hero ? new Color(1f, 0.35f, 0.35f) : Color.white);
+                            AudioManager.Play(e.target is Hero ? Sfx.Hurt : e.effective ? Sfx.HitEffective : Sfx.Hit);
+                            if (e.target is Hero) Shake(Mathf.Clamp(1 + e.amount / 5, 1, 4));
+                            else if (e.effective) Shake(1);
                             Float(e.target, "-" + e.amount, e.effective ? Palette.Gold : Palette.Red);
                             if (e.effective) Float(e.target, "Eficaz!", Palette.Gold, 14f);
                         }
-                        else if (e.blocked > 0) Float(e.target, "Bloqueado", new Color(0.5f, 0.72f, 1f));
+                        else if (e.blocked > 0) { Float(e.target, "Bloqueado", new Color(0.5f, 0.72f, 1f)); AudioManager.Play(Sfx.Shield); }
                         break;
                     case BattleEventKind.BurnTick:
-                        if (e.amount > 0) { views[e.target].PlayHit(); Float(e.target, "-" + e.amount, new Color(1f, 0.6f, 0.29f)); }
+                        if (e.amount > 0) { views[e.target].PlayHit(); AudioManager.Play(Sfx.Burn); Float(e.target, "-" + e.amount, new Color(1f, 0.6f, 0.29f)); }
                         break;
-                    case BattleEventKind.Shield: Float(e.target, "+" + e.amount + " Esc", new Color(0.5f, 0.72f, 1f)); break;
-                    case BattleEventKind.Heal: if (e.amount > 0) Float(e.target, "+" + e.amount, Palette.Green); break;
-                    case BattleEventKind.Burn: Float(e.target, "Queimadura", new Color(1f, 0.6f, 0.29f)); break;
+                    case BattleEventKind.Shield: AudioManager.Play(Sfx.Shield); Float(e.target, "+" + e.amount + " Esc", new Color(0.5f, 0.72f, 1f)); break;
+                    case BattleEventKind.Heal: if (e.amount > 0) { AudioManager.Play(Sfx.Heal); Float(e.target, "+" + e.amount, Palette.Green); } break;
+                    case BattleEventKind.Burn: AudioManager.Play(Sfx.Burn); Float(e.target, "Queimadura", new Color(1f, 0.6f, 0.29f)); break;
                     case BattleEventKind.Weak: Float(e.target, "Fraco", new Color(0.78f, 0.6f, 1f)); break;
                     case BattleEventKind.Stun: Float(e.target, "Atordoado", Palette.Gold); break;
                     case BattleEventKind.StunSkip: Float(e.target, "Atordoado!", Palette.Gold); break;
                     case BattleEventKind.Strength:
                     case BattleEventKind.Enrage: Float(e.target, "Força +" + e.amount, Palette.Green); break;
-                    case BattleEventKind.Summon: AddEnemy((Enemy)e.target, Sys.Enemies.IndexOf((Enemy)e.target)); Float(e.target, "Invocado!", Palette.Cream); break;
-                    case BattleEventKind.Death: views[e.target].PlayDeath(); break;
+                    case BattleEventKind.Summon: AddEnemy((Enemy)e.target, Sys.Enemies.IndexOf((Enemy)e.target)); Float(e.target, "Invocado!", Palette.Cream); AudioManager.Play(Sfx.Summon); break;
+                    case BattleEventKind.Death: views[e.target].PlayDeath(); AudioManager.Play(e.target is Hero ? Sfx.Lose : Sfx.Die); if (!(e.target is Hero)) Shake(1); break;
                 }
                 RefreshHud();
                 yield return Wait(e.kind == BattleEventKind.Damage || e.kind == BattleEventKind.Death ? 0.22f : 0.12f);
             }
+        }
+
+        // ---------- Tremor de tela leve (em passos de 1 pixel, para não borrar o pixel art) ----------
+
+        Coroutine shaking;
+
+        void Shake(int pixels)
+        {
+            var cam = Camera.main;
+            if (cam == null) return;
+            if (shaking != null) StopCoroutine(shaking);
+            shaking = StartCoroutine(ShakeRoutine(cam.transform, pixels));
+        }
+
+        IEnumerator ShakeRoutine(Transform cam, int pixels)
+        {
+            var origin = new Vector3(0f, 0f, cam.position.z);
+            float d = Dur(0.18f), t = 0f;
+            while (t < d)
+            {
+                t += Time.deltaTime;
+                int amp = Mathf.CeilToInt(pixels * (1f - Mathf.Clamp01(t / d)));
+                cam.position = origin + new Vector3(UnityEngine.Random.Range(-amp, amp + 1), UnityEngine.Random.Range(-amp, amp + 1), 0f) / 32f;
+                yield return null;
+            }
+            cam.position = origin;
+            shaking = null;
         }
 
         int floatCount;
@@ -656,6 +688,7 @@ namespace XequeDeTinta.Battle
             Busy = true;
             yield return Wait(0.6f);
             int kills = 0; foreach (var e in Sys.Enemies) if (!e.IsAlive) kills++;
+            AudioManager.Play(Sys.Phase == BattlePhase.Victory ? Sfx.Win : Sfx.Lose);
             Result = new BattleResult { Won = Sys.Phase == BattlePhase.Victory, HeroHp = Sys.Hero.Hp, HeroMaxHp = Sys.Hero.MaxHp, Kills = kills };
             ResultShown = true;
             ShowResultPanel();

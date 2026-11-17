@@ -54,6 +54,7 @@ namespace XequeDeTinta.UI
             heal = UIFactory.CreateButton("Curar", panel, $"Curar {amount} de vida", new Vector2(0.5f, 0), new Vector2(150, 20), new Vector2(0, 60), () =>
             {
                 int healed = RestLogic.Rest(run);
+                Core.AudioManager.Play(Core.Sfx.Heal);
                 Finish($"Você descansa e recupera {healed} de vida.\nVida {run.Hp}/{run.MaxHp}");
             });
 
@@ -83,6 +84,7 @@ namespace XequeDeTinta.UI
             var panel = Modal(canvas, "PainelBau", new Vector2(360, 170), out var root);
             TopText(panel, "Titulo", "Baú!", 12, Palette.Gold, 8, 16);
             var res = ChestLogic.Open(run);
+            Core.AudioManager.Play(Core.Sfx.Coin);
             string text = $"Você encontra {res.Coins} moedas";
             text += res.Relic != null ? $"\ne a relíquia {res.Relic.displayName}:\n{res.Relic.description}" : "\n(e já tem todas as relíquias).";
             TopText(panel, "Texto", text, 8, Palette.Cream, 34, 60);
@@ -154,7 +156,7 @@ namespace XequeDeTinta.UI
                 var r = shop.Buy(run, item, remove);
                 switch (r)
                 {
-                    case BuyResult.Ok: msg.text = $"Comprou {item.Label}!"; if (widgets.TryGetValue(item, out var w)) w.SetActive(false); break;
+                    case BuyResult.Ok: Core.AudioManager.Play(Core.Sfx.Coin); msg.text = $"Comprou {item.Label}!"; if (widgets.TryGetValue(item, out var w)) w.SetActive(false); break;
                     case BuyResult.NotEnoughCoins: msg.text = "Moedas insuficientes!"; break;
                     case BuyResult.HpFull: msg.text = "Sua vida já está cheia."; break;
                     case BuyResult.DeckTooSmall: msg.text = "Deck pequeno demais."; break;

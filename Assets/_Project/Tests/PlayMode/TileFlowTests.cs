@@ -63,7 +63,7 @@ namespace XequeDeTinta.Tests
 
         static bool Click(string label)
         {
-            foreach (var b in Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            foreach (var b in Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude))
             {
                 var t = b.GetComponentInChildren<TMP_Text>();
                 if (t != null && t.text == label && b.interactable) { b.onClick.Invoke(); return true; }
@@ -73,7 +73,7 @@ namespace XequeDeTinta.Tests
 
         static bool ClickByName(string name)
         {
-            foreach (var b in Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            foreach (var b in Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude))
                 if (b.name == name && b.interactable) { b.onClick.Invoke(); return true; }
             return false;
         }
@@ -112,7 +112,7 @@ namespace XequeDeTinta.Tests
             yield return GoTo(2, 1, branch: 4);
             Assert.IsTrue(Click("Melhorar 1 carta"));
             yield return null;
-            var cards = Object.FindObjectsByType<CardView>(FindObjectsSortMode.None);
+            var cards = Object.FindObjectsByType<CardView>();
             Assert.AreEqual(10, cards.Length, "o seletor mostra as 10 cartas melhoráveis");
             var alvo = cards.First(c => c.Card.Data.id == "golpe");
             alvo.OnPointerClick(new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current));

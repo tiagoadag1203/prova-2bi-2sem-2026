@@ -44,7 +44,7 @@ namespace XequeDeTinta.Tests
 
         static bool Click(string label)
         {
-            foreach (var b in Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            foreach (var b in Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude))
             {
                 var t = b.GetComponentInChildren<TMP_Text>();
                 if (t != null && t.text == label && b.interactable) { b.onClick.Invoke(); return true; }
@@ -182,7 +182,35 @@ namespace XequeDeTinta.Tests
             }
             Assert.AreEqual(3, battle.Sys.Enemies.Count, "o Rei Slime invocou 2 Slimes Mirins");
             Assert.AreEqual(2, battle.Sys.Enemies.Count(e => e.Data.id == "slime_mirim"));
-            Assert.AreEqual(4, Object.FindObjectsByType<ActorView>(FindObjectsSortMode.None).Length, "herói + Rei + 2 Mirins");
+            Assert.AreEqual(4, Object.FindObjectsByType<ActorView>().Length, "herói + Rei + 2 Mirins");
+        }
+
+        [UnityTest]
+        public IEnumerator Musica_TrocaPorCena_E_TransicaoClareiaDepois()
+        {
+            SceneManager.LoadScene("Title");
+            yield return WaitScene("Title");
+            GameManager.Ensure(Cfg());
+            yield return null;
+            Assert.AreEqual("board", AudioManager.CurrentTrackName);
+
+            GameManager.Instance.StartRun();                     // com fade de saída
+            yield return WaitScene("Board");
+            Assert.AreEqual("board", AudioManager.CurrentTrackName);
+
+            var board = Object.FindAnyObjectByType<BoardController>();
+            board.speed = 40f;
+            board.Rng = new ScriptedRng(1);
+            board.RollDice();                                    // casa 1 = batalha
+            yield return WaitScene("Battle");
+            Assert.AreEqual("battle", AudioManager.CurrentTrackName);
+
+            // a tela volta a ficar visível depois do fade (o preto some)
+            yield return WaitFor(() =>
+            {
+                var img = GameObject.Find("Preto")?.GetComponent<Image>();
+                return img != null && img.color.a < 0.01f;
+            });
         }
     }
 }

@@ -295,6 +295,7 @@ namespace XequeDeTinta.Board
         {
             SetState(BoardState.Rolling);
             SetMessage("Rolando...");
+            AudioManager.Play(Sfx.Dice);
             float t = 0;
             while (t < Dur(rollSeconds))
             {
@@ -379,6 +380,7 @@ namespace XequeDeTinta.Board
         {
             Vector3 from = pawn.position, to = PawnPosition(graph.Get(tileId).position);
             if (pawnAnim != null) { pawnAnim.ResetTrigger("hop"); pawnAnim.SetTrigger("hop"); }
+            AudioManager.Play(Sfx.Step);
             float d = Dur(hopSeconds), t = 0;
             while (t < d)
             {
@@ -484,6 +486,7 @@ namespace XequeDeTinta.Board
             var r = Run.Reward;
             if (r == null) return;
             Run.AddCoins(r.Coins);
+            if (r.Coins > 0) AudioManager.Play(Sfx.Coin);
             if (index >= 0 && index < r.Choices.Count) Run.AddCard(r.Choices[index]);
             Run.Reward = null;
             if (rewardPanel != null) { Destroy(rewardPanel); rewardPanel = null; }

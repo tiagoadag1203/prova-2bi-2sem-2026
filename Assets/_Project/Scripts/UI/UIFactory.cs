@@ -135,6 +135,7 @@ namespace XequeDeTinta.UI
             colors.pressedColor = new Color(0.8f, 0.7f, 0.4f);
             colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.8f);
             btn.colors = colors;
+            btn.onClick.AddListener(() => Core.AudioManager.Play(Core.Sfx.Click));
             if (onClick != null) btn.onClick.AddListener(() => onClick());
             var text = CreateText("Texto", r, label, fontSize, Palette.Purple);
             text.rectTransform.offsetMin = new Vector2(3, 2);
