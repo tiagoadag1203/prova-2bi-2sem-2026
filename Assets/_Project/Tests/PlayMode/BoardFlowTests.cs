@@ -19,7 +19,7 @@ namespace XequeDeTinta.Tests
             SceneManager.LoadScene("Board");
             yield return null;
             yield return null;
-            board = Object.FindFirstObjectByType<BoardController>();
+            board = Object.FindAnyObjectByType<BoardController>();
             Assert.IsNotNull(board, "BoardController não encontrado na cena Board");
             board.speed = 40f;
         }

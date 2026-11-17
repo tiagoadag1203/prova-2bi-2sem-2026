@@ -58,8 +58,9 @@ namespace XequeDeTinta.UI
         /// <summary>Garante um EventSystem com o módulo do Input System.</summary>
         public static void EnsureEventSystem()
         {
-            if (UnityEngine.Object.FindFirstObjectByType<EventSystem>() != null) return;
-            new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
+            if (UnityEngine.Object.FindAnyObjectByType<EventSystem>() != null) return;
+            var go = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
+            go.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
         }
 
         public static RectTransform Rect(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)

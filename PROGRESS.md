@@ -3,13 +3,15 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M3 (Batalha), a iniciar. Escopo: versão enxuta, M0 a M8.
+M4 (Partida), a iniciar. Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 - **M0 · Base e arte (lote 1).** Pastas do projeto, câmera Pixel Perfect (640x360, PPU 32), pipeline de importação de arte, lote 1 gerado e importado, clipes e Animators criados, cena `Scenes/M0_Test.unity` com tudo animando. 2 testes de EditMode passam.
 - **M1 · Dados.** ScriptableObjects `CardData`, `EnemyData`, `EncounterData`, `RelicData`, `EventData`, `BoardLayout` e `GameConfig` (todos os números de balanceamento) em `Scripts/Data`. Assets criados pelo menu `Xeque > M1 > Criar assets de dados` (idempotente): 12 cartas, 5 inimigos, 6 encontros, 5 relíquias, 3 eventos, 1 tabuleiro e o `GameConfig`. 21 testes de EditMode passam (19 de dados, conferindo cada número contra o GDD).
 
 - **M2 · Tabuleiro.** Cena `Scenes/Board.unity` (já no Build Settings) com as 12 casas, ligações pontilhadas, as 2 bifurcações, Peão que pula casa a casa, dado que rola, casas resolvidas em cinza, parada no Chefe e HUD (vida, moedas, "Ver deck", botão de rolar, Espaço rola). Lógica pura em `BoardGraph`, `BoardMover`, `BoardProgress`, `DiceRoller`; apresentação em `BoardController`. 14 testes de EditMode (lógica) e 4 de PlayMode (fluxo rolar, bifurcar, escolher, resolver, casa cinza, chefe). Screenshot em `Docs/screenshots/m2_board.png`.
+
+- **M3 · Batalha.** `BattleSystem` (Início, TurnoJogador, TurnoInimigo, Vitória, Derrota), `DeckManager` (compra, reembaralho, descarte, esgotar), `DamageCalc`/`ElementRules`, efeitos de carta e de inimigo como classes pequenas (`DealDamage`, `GainShield`, `ApplyBurn`, `ApplyWeak`, `Heal`, `Stun`; `EnemyAttack`, `EnemyShield`, `EnemyHealAlly`, `EnemySummon`...), IA em `EnemyBrain`. Cena `Scenes/Battle.unity` com `BattleController` (atores animados, barras de vida, status, intenções com ícone e dano, mão de cartas com hover, alvo por clique, energia, contadores, números flutuantes "Eficaz!", painel de vitória/derrota). Animation Events `OnImpact` (quadro 4 dos ataques) e `OnDeathEnd`. 63 testes de EditMode de regra + 5 de PlayMode de fluxo (inclui "o dano só entra no quadro de impacto"). Screenshot em `Docs/screenshots/m3_battle.png`.
 
 ## Decisões tomadas
 - **Pixel Perfect Camera** vem embutida no URP 17 (`UnityEngine.Rendering.Universal.PixelPerfectCamera`). Nenhum pacote novo foi instalado; `Packages/` e `ProjectSettings/` não foram alterados.
@@ -30,9 +32,17 @@ M3 (Batalha), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **TextMeshPro Essentials** importados (pasta `Assets/TextMesh Pro`), necessários para a fonte; nenhum pacote novo.
 - **Ganchos do tabuleiro:** `BoardController.Resolver(tile, done)` é onde o M4/M5 ligam batalha, loja etc.; `RollFinished` e `DeckRequested` são eventos; `PlaceAt` posiciona o peão sem animar.
 - **Peão escalado 2x** no tabuleiro (a figura ocupa uns 20 px do quadro de 44).
+- **Resolução em duas fases:** `BattleSystem.PlayCard` gasta energia e tira a carta da mão; os efeitos só valem em `CardPlay.Resolve()`, chamado pela apresentação no Animation Event de impacto. Idem para inimigos (`NextEnemyAction()` -> `EnemyPlay.Resolve()`). Nos testes basta chamar `Resolve()` direto.
+- **Regras que o GDD deixou em aberto (provisório):** Queimadura tira 2 no início do turno do dono, ignora escudo, e gasta 1 turno; Fraco gasta 1 turno ao fim da ação do dono; escudo do herói zera no início do turno dele e o dos inimigos no início do turno deles; atordoado pula a ação, perde o atordoamento e mantém a mesma intenção; Slime Vermelho queima nos turnos 3, 6...; Slime Azul cura o aliado com mais vida faltando (ele mesmo se estiver sozinho ou todos cheios, sem efeito); "abaixo de 50%" é estritamente menor; o chefe só invoca até 2 Mirins vivos; Slime Mirim invocado só age no turno seguinte.
+- **Ganchos para relíquias (M5):** `IBattleHook` (OnBattleStart, OnPlayerTurnStart, OnEnemyKilled) em `BattleSystem.Hooks`.
+- **Entrega da batalha ao GameManager (M4):** `BattleLauncher.Setup` (entrada) e `BattleLauncher.OnFinished` (saída com `BattleResult`). Sem eles, a cena monta uma batalha de teste (config.battleEncounters[4]). `BattleLauncher.SpeedOverride` acelera a apresentação.
+- **Animator Controllers atualizados no lugar** (`ArtPipeline`), para manter o GUID. Se algum dia reaparecer referência quebrada, rode `Xeque > M1 > Criar assets de dados`, `M2 > Construir cena Board` e `M3 > Construir cena Battle`.
+- **Escala em batalha:** herói 3x, slimes 2x (Mirim 1,2x). Status são texto colorido ("Queim 3", "Fraco 1", "Forç 2", "Atord", "Esc 5"); os ícones de status chegam no lote 2 (M6). Cartas sem ilustração até o M6.
 - Sprites de cartas, relíquias e do Rei Slime ficam nulos até o M6 (lote 2).
 
 ## Para o humano testar jogando
+- **Batalha (M3):** abrir `Scenes/Battle.unity`, dar Play e jogar uma batalha de 3 inimigos: ritmo das animações e do dano (o golpe acerta no quadro certo do ataque?), se a intenção sobre o inimigo é clara, se os números flutuantes e "Eficaz!" aparecem a tempo de ler, se o hover/enlargement das cartas atrapalha clicar nos inimigos atrás delas, se a mão cobre demais os inimigos, se 3 de energia e 5 cartas dão um turno interessante.
+- A mão ocupa a parte de baixo e as barras de vida dos inimigos ficam logo acima dela; ajustar se parecer apertado.
 - **Tabuleiro (M2):** abrir `Scenes/Board.unity` e jogar: ritmo do dado e do pulo do Peão, se a escolha de caminho (seta dourada, clicar na casa) é clara, se o cinza das casas resolvidas fica legível, se a mensagem do topo ajuda. Hoje a casa só mostra uma mensagem ("Batalha!"); a batalha de verdade entra no M3/M4.
 - O Peão sobre a casa tampa um pouco do ícone dela; avaliar se vale subir o Peão.
 - Abrir `Scenes/M0_Test.unity` e dar Play: conferir se Peão e slimes têm silhueta legível em tamanho real e se o ritmo das animações (8 quadros/s) está bom.

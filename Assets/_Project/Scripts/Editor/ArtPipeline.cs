@@ -51,6 +51,9 @@ namespace XequeDeTinta.EditorTools
         // Animações em loop; as demais tocam uma vez.
         static readonly HashSet<string> Loops = new HashSet<string> { "idle" };
 
+        /// <summary>Índice (base 0) do quadro de impacto do ataque; o Animation Event OnImpact dispara nele (quadro 4 de 6).</summary>
+        const int ImpactFrame = 3;
+
         [MenuItem("Xeque/Reimportar arte")]
         public static void Reimport()
         {
@@ -88,10 +91,14 @@ namespace XequeDeTinta.EditorTools
             Directory.CreateDirectory(dir);
             AssetDatabase.Refresh();
 
+            // Atualiza o controller no lugar (mantém o GUID, para não quebrar referências em dados e cenas).
             string controllerPath = dir + "/" + name + ".controller";
-            AssetDatabase.DeleteAsset(controllerPath);
-            var controller = AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+            var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath)
+                             ?? AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
             var sm = controller.layers[0].stateMachine;
+            foreach (var st in sm.states) sm.RemoveState(st.state);
+            foreach (var tr in sm.anyStateTransitions) sm.RemoveAnyStateTransition(tr);
+            for (int i = controller.parameters.Length - 1; i >= 0; i--) controller.RemoveParameter(i);
 
             foreach (var a in anims)
             {
@@ -112,6 +119,18 @@ namespace XequeDeTinta.EditorTools
                 var cs = AnimationUtility.GetAnimationClipSettings(clip);
                 cs.loopTime = Loops.Contains(a.Key);
                 AnimationUtility.SetAnimationClipSettings(clip, cs);
+
+                // Animation Events: o dano é aplicado no impacto; ao fim da morte o corpo some.
+                if (a.Key == "attack" && sprites.Count > ImpactFrame)
+                    AnimationUtility.SetAnimationEvents(clip, new[]
+                    {
+                        new AnimationEvent { time = ImpactFrame / clip.frameRate, functionName = "OnImpact" },
+                    });
+                else if (a.Key == "death")
+                    AnimationUtility.SetAnimationEvents(clip, new[]
+                    {
+                        new AnimationEvent { time = (sprites.Count - 1) / clip.frameRate, functionName = "OnDeathEnd" },
+                    });
 
                 string clipPath = dir + "/" + name + "_" + a.Key + ".anim";
                 AssetDatabase.DeleteAsset(clipPath);
