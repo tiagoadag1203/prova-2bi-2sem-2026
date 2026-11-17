@@ -106,7 +106,7 @@ Todos os marcos (M0 a M8) concluídos. Resta só a verificação humana jogando 
 - **Testes:** 37 de PlayMode (novos: `StoryFlowTests`), EditMode de dados, arte e balanceamento verdes; dois testes de derrota deixaram de depender de sorte (o Slime Verde pode escolher escudo no 1º turno). Console sem erros nem warnings.
 - **Screenshots:** `Docs/screenshots/m10_titulo.png`, `m10_historia.png`, `m10_tabuleiro.png`, `m10_batalha.png` (3 slimes) e `m10_chefe.png`.
 - **Para o humano avaliar:** as peças nos slimes de 32 px (torre, cavalo, bispo) como detalhe: dá para ler? O fundo da batalha é movimentado; os personagens se destacam? O nome do evento "Fonte de Feltro" ficou (é só um nome de evento).
-- As builds em `Build/` estão **desatualizadas** (são do tema da floresta); refazer antes de entregar.
+- **Build do Mac refeita** (17/11/2026, com o tema do xadrez e todas as correções até `e5d4582`): `Build/Mac/XequeDeTinta.app` e `Build/XequeDeTinta-Mac.zip` (51 MB), 0 erros; abre e roda fora do Editor, começa no Título. A build do **Windows continua desatualizada** (tema da floresta); refazer se for entregar. `Build/` fica fora do git.
 
 ## Pendências
 - Ícones de intenção (16x16) e ícones das casas ainda não foram avaliados em tamanho real dentro do jogo.
