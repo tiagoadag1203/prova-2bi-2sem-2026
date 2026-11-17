@@ -3,11 +3,13 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M2 (Tabuleiro), a iniciar. Escopo: versão enxuta, M0 a M8.
+M3 (Batalha), a iniciar. Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 - **M0 · Base e arte (lote 1).** Pastas do projeto, câmera Pixel Perfect (640x360, PPU 32), pipeline de importação de arte, lote 1 gerado e importado, clipes e Animators criados, cena `Scenes/M0_Test.unity` com tudo animando. 2 testes de EditMode passam.
 - **M1 · Dados.** ScriptableObjects `CardData`, `EnemyData`, `EncounterData`, `RelicData`, `EventData`, `BoardLayout` e `GameConfig` (todos os números de balanceamento) em `Scripts/Data`. Assets criados pelo menu `Xeque > M1 > Criar assets de dados` (idempotente): 12 cartas, 5 inimigos, 6 encontros, 5 relíquias, 3 eventos, 1 tabuleiro e o `GameConfig`. 21 testes de EditMode passam (19 de dados, conferindo cada número contra o GDD).
+
+- **M2 · Tabuleiro.** Cena `Scenes/Board.unity` (já no Build Settings) com as 12 casas, ligações pontilhadas, as 2 bifurcações, Peão que pula casa a casa, dado que rola, casas resolvidas em cinza, parada no Chefe e HUD (vida, moedas, "Ver deck", botão de rolar, Espaço rola). Lógica pura em `BoardGraph`, `BoardMover`, `BoardProgress`, `DiceRoller`; apresentação em `BoardController`. 14 testes de EditMode (lógica) e 4 de PlayMode (fluxo rolar, bifurcar, escolher, resolver, casa cinza, chefe). Screenshot em `Docs/screenshots/m2_board.png`.
 
 ## Decisões tomadas
 - **Pixel Perfect Camera** vem embutida no URP 17 (`UnityEngine.Rendering.Universal.PixelPerfectCamera`). Nenhum pacote novo foi instalado; `Packages/` e `ProjectSettings/` não foram alterados.
@@ -23,9 +25,16 @@ M2 (Tabuleiro), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **IA dos inimigos como dados:** `EnemyData` tem `EnemyBehaviorKind` (Simple, RandomNoRepeatDefend, EveryNthSpecial, Cycle) mais a lista de ações; o Rei Slime usa Cycle, `enrage*` (Força abaixo de 50%) e `summonedEnemy`/`summonMaxAlive`.
 - **Layout do tabuleiro (provisório):** linha reta de 12 casas com bifurcações nas casas 2 (Batalha ou Descanso) e 6 (Batalha ou Baú), que se juntam nas casas 5 e 9. Posições em unidades de mundo, ajustáveis no asset.
 - **Textos dos eventos** escritos por mim (provisório), com as escolhas do GDD.
+- **Aleatoriedade injetável:** `IRng` (`SeededRng` no jogo, `ScriptedRng` nos testes). Todo sorteio (dado, embaralhar, IA, recompensas) deve usar `IRng`.
+- **Interface por código:** `UIFactory` monta Canvas (640x360 de referência), textos TMP, painéis e botões; a fonte é Press Start 2P (OFL, licença em `Art/UI/Fonts/OFL.txt`), asset TMP em `Resources/Fonts`. Até o lote 2 (M6) painéis e botões são retângulos creme/dourado/roxo.
+- **TextMeshPro Essentials** importados (pasta `Assets/TextMesh Pro`), necessários para a fonte; nenhum pacote novo.
+- **Ganchos do tabuleiro:** `BoardController.Resolver(tile, done)` é onde o M4/M5 ligam batalha, loja etc.; `RollFinished` e `DeckRequested` são eventos; `PlaceAt` posiciona o peão sem animar.
+- **Peão escalado 2x** no tabuleiro (a figura ocupa uns 20 px do quadro de 44).
 - Sprites de cartas, relíquias e do Rei Slime ficam nulos até o M6 (lote 2).
 
 ## Para o humano testar jogando
+- **Tabuleiro (M2):** abrir `Scenes/Board.unity` e jogar: ritmo do dado e do pulo do Peão, se a escolha de caminho (seta dourada, clicar na casa) é clara, se o cinza das casas resolvidas fica legível, se a mensagem do topo ajuda. Hoje a casa só mostra uma mensagem ("Batalha!"); a batalha de verdade entra no M3/M4.
+- O Peão sobre a casa tampa um pouco do ícone dela; avaliar se vale subir o Peão.
 - Abrir `Scenes/M0_Test.unity` e dar Play: conferir se Peão e slimes têm silhueta legível em tamanho real e se o ritmo das animações (8 quadros/s) está bom.
 - O Peão ficou menor e menos "cheio" que os slimes (a figura ocupa uns 20 px do quadro de 44). Avaliar se precisa ampliar.
 - O Slime Vermelho ficou escuro; a chama no topo é pequena. Avaliar se a leitura "Fogo" está clara ou se vale regenerar.
