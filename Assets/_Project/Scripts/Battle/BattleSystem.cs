@@ -14,15 +14,16 @@ namespace XequeDeTinta.Battle
         public EncounterData Encounter;
         public BattleRules Rules = new BattleRules();
         public IRng Rng = new SeededRng();
+        /// <summary>Relíquias do herói; cada uma vira um gancho (IBattleHook) que reage à batalha.</summary>
+        public List<RelicData> Relics = new List<RelicData>();
     }
 
-    /// <summary>Ganchos para relíquias (M5): classes pequenas que reagem a momentos da batalha.</summary>
+    /// <summary>Ganchos de relíquia: classes pequenas que reagem a momentos da batalha e devolvem eventos para a apresentação.</summary>
     public interface IBattleHook
     {
-        void OnBattleStart(BattleSystem battle);
-        /// <summary>Chamado no início de cada turno do jogador, antes de comprar. 'first' é o primeiro turno da batalha.</summary>
-        void OnPlayerTurnStart(BattleSystem battle, bool first);
-        void OnEnemyKilled(BattleSystem battle, Enemy enemy);
+        /// <summary>No início de cada turno do jogador, depois do escudo zerar e antes de comprar. 'first' é o primeiro turno da batalha.</summary>
+        void OnPlayerTurnStart(BattleSystem battle, bool first, List<BattleEvent> events);
+        void OnEnemyKilled(BattleSystem battle, Enemy enemy, List<BattleEvent> events);
     }
 
     /// <summary>
@@ -54,6 +55,11 @@ namespace XequeDeTinta.Battle
             Hero = new Hero { Name = "Peão", Element = Element.Neutral, MaxHp = setup.HeroMaxHp, Hp = setup.HeroHp };
             Deck = new DeckManager(setup.Deck, Rng);
             foreach (var data in setup.Encounter.enemies) SpawnEnemy(data);
+            foreach (var relic in setup.Relics)
+            {
+                var hook = RelicHooks.Create(relic);
+                if (hook != null) Hooks.Add(hook);
+            }
         }
 
         public bool IsOver => Phase == BattlePhase.Victory || Phase == BattlePhase.Defeat;
@@ -74,7 +80,6 @@ namespace XequeDeTinta.Battle
 
         public void Begin()
         {
-            foreach (var h in Hooks) h.OnBattleStart(this);
             StartPlayerTurn();
         }
 
@@ -91,7 +96,7 @@ namespace XequeDeTinta.Battle
             if (CheckEnd()) return;
 
             Energy = Rules.EnergyPerTurn;
-            foreach (var h in Hooks) h.OnPlayerTurnStart(this, Turn == 1);
+            foreach (var h in Hooks) h.OnPlayerTurnStart(this, Turn == 1, TurnStartEvents);
             Deck.Draw(Rules.HandSize);
         }
 
@@ -290,7 +295,7 @@ namespace XequeDeTinta.Battle
                 {
                     e.DeathAnnounced = true;
                     events.Add(new BattleEvent(BattleEventKind.Death, Hero, e));
-                    foreach (var h in Hooks) h.OnEnemyKilled(this, e);
+                    foreach (var h in Hooks) h.OnEnemyKilled(this, e, events);
                 }
             if (!Hero.IsAlive && !Hero.DeathAnnounced)
             {

@@ -19,7 +19,8 @@ namespace XequeDeTinta.Core
     public class RunState
     {
         public GameConfig Config { get; }
-        public IRng Rng { get; }
+        /// <summary>Fonte de aleatoriedade da partida; os testes podem trocá-la por uma roteirizada.</summary>
+        public IRng Rng { get; set; }
 
         public int Hp, MaxHp, Coins;
         public readonly List<CardInstance> Deck = new List<CardInstance>();

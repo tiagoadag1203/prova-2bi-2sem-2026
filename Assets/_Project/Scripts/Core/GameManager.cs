@@ -82,6 +82,7 @@ namespace XequeDeTinta.Core
                 Encounter = encounter,
                 Rules = BattleRules.From(Config),
                 Rng = new SeededRng(Rng.Range(0, int.MaxValue)),
+                Relics = new System.Collections.Generic.List<RelicData>(Run.Relics),
             };
             BattleLauncher.SpeedOverride = BattleSpeed;
             BattleLauncher.OnFinished = r => OnBattleFinished(r, tile);

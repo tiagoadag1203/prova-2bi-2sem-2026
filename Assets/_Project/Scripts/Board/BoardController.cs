@@ -11,7 +11,7 @@ using XequeDeTinta.UI;
 
 namespace XequeDeTinta.Board
 {
-    public enum BoardState { Idle, Rolling, Moving, Choosing, Resolving, Finished }
+    public enum BoardState { Idle, Rolling, Confirming, Moving, Choosing, Resolving, Finished }
 
     /// <summary>
     /// Ponte entre a lógica do tabuleiro (BoardGraph/BoardMover/BoardProgress) e a cena:
@@ -58,7 +58,9 @@ namespace XequeDeTinta.Board
         Animator pawnAnim;
         SpriteRenderer diceRenderer;
         TextMeshProUGUI statusText, messageText;
-        Button rollButton;
+        Button rollButton, walkButton, rerollButton;
+        RelicBar relicBar;
+        int rollDecision;           // 0 esperando, 1 andar, 2 rolar de novo
         Canvas hudCanvas;
         Camera cam;
         int chosen = -1;
@@ -170,6 +172,12 @@ namespace XequeDeTinta.Board
 
             rollButton = UIFactory.CreateButton("Rolar", canvas.transform, "Rolar dado (Espaço)",
                 new Vector2(0.5f, 0), new Vector2(200, 20), new Vector2(0, 8), RollDice);
+            walkButton = UIFactory.CreateButton("Andar", canvas.transform, "Andar (Espaço)",
+                new Vector2(0.5f, 0), new Vector2(130, 20), new Vector2(-70, 8), ConfirmRoll);
+            rerollButton = UIFactory.CreateButton("RolarDeNovo", canvas.transform, "Rolar de novo",
+                new Vector2(0.5f, 0), new Vector2(130, 20), new Vector2(70, 8), RerollOnce);
+            walkButton.gameObject.SetActive(false); rerollButton.gameObject.SetActive(false);
+            relicBar = RelicBar.Create(canvas.transform);
             UIFactory.CreateButton("VerDeck", canvas.transform, "Ver deck",
                 new Vector2(1, 1), new Vector2(70, 18), new Vector2(-8, -8), OpenDeck);
             RefreshHud();
@@ -178,6 +186,7 @@ namespace XequeDeTinta.Board
         public void RefreshHud()
         {
             if (statusText != null && Run != null) statusText.text = $"Vida {Run.Hp}/{Run.MaxHp}   Moedas {Run.Coins}";
+            if (relicBar != null && Run != null) relicBar.Rebuild(Run.Relics);
         }
 
         void OpenDeck()
@@ -209,8 +218,11 @@ namespace XequeDeTinta.Board
 
         void Update()
         {
-            if (State == BoardState.Idle && Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-                RollDice();
+            if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            {
+                if (State == BoardState.Idle) RollDice();
+                else if (State == BoardState.Confirming) ConfirmRoll();
+            }
 
             if (State == BoardState.Choosing)
             {
@@ -244,19 +256,21 @@ namespace XequeDeTinta.Board
 
         float Dur(float seconds) => seconds / Mathf.Max(0.01f, speed);
 
-        IEnumerator RollRoutine()
+        public void ConfirmRoll() { if (State == BoardState.Confirming) rollDecision = 1; }
+        public void RerollOnce() { if (State == BoardState.Confirming) rollDecision = 2; }
+
+        IEnumerator RollOnce()
         {
             SetState(BoardState.Rolling);
             SetMessage("Rolando...");
             float t = 0;
-            int frames = 0;
             while (t < Dur(rollSeconds))
             {
                 diceRenderer.sprite = diceFaces[UnityEngine.Random.Range(0, diceFaces.Length)];
                 diceRenderer.transform.localRotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(-12f, 12f));
                 float step = Dur(0.06f);
                 yield return new WaitForSeconds(step);
-                t += step; frames++;
+                t += step;
             }
             diceRenderer.transform.localRotation = Quaternion.identity;
             LastRoll = DiceRoller.Roll(Rng, config.diceSides);
@@ -264,6 +278,25 @@ namespace XequeDeTinta.Board
             SetMessage($"Tirou {LastRoll}!");
             RollFinished?.Invoke(LastRoll);
             yield return new WaitForSeconds(Dur(0.25f));
+        }
+
+        IEnumerator RollRoutine()
+        {
+            yield return RollOnce();
+
+            // Dado Viciado: pode rolar de novo 1 vez por rolagem (provisório).
+            if (Run.HasRelic(RelicKind.RerollDice))
+            {
+                SetState(BoardState.Confirming);
+                SetMessage($"Tirou {LastRoll}! Andar ou rolar de novo?");
+                rollDecision = 0;
+                walkButton.gameObject.SetActive(true); rerollButton.gameObject.SetActive(true);
+                rollButton.gameObject.SetActive(false);
+                while (rollDecision == 0) yield return null;
+                walkButton.gameObject.SetActive(false); rerollButton.gameObject.SetActive(false);
+                rollButton.gameObject.SetActive(true);
+                if (rollDecision == 2) yield return RollOnce();
+            }
 
             SetState(BoardState.Moving);
             mover.Begin(LastRoll);
@@ -358,10 +391,34 @@ namespace XequeDeTinta.Board
                 case TileType.Boss:
                     GameManager.Instance.StartBattle(tile);   // a cena Board é descarregada; ResumeAfterBattle continua
                     break;
+                case TileType.Rest:
+                    OpenPanel(TilePanels.Rest(hudCanvas.transform, Run, () => EndPanel(done)));
+                    break;
+                case TileType.Shop:
+                    OpenPanel(TilePanels.Shop(hudCanvas.transform, Run, Shop.Create(Run), () => EndPanel(done)));
+                    break;
+                case TileType.Event:
+                    OpenPanel(TilePanels.Event(hudCanvas.transform, Run, Run.NextEvent(), () => EndPanel(done)));
+                    break;
+                case TileType.Chest:
+                    OpenPanel(TilePanels.Chest(hudCanvas.transform, Run, () => EndPanel(done)));
+                    break;
                 default:
                     done();
                     break;
             }
+        }
+
+        /// <summary>Painel da casa atual (loja, descanso, evento, baú); null se nenhum.</summary>
+        public GameObject TilePanel { get; private set; }
+
+        void OpenPanel(GameObject panel) { TilePanel = panel; RefreshHud(); }
+
+        void EndPanel(Action done)
+        {
+            TilePanel = null;
+            RefreshHud();
+            done();
         }
 
         /// <summary>Volta da batalha vencida: mostra a recompensa, aplica a escolha e só então marca a casa como resolvida.</summary>

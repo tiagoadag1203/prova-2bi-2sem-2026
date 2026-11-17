@@ -3,7 +3,7 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M5 (Casas e relíquias), a iniciar. Escopo: versão enxuta, M0 a M8.
+M6 (Chefe e telas), a iniciar. Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 - **M0 · Base e arte (lote 1).** Pastas do projeto, câmera Pixel Perfect (640x360, PPU 32), pipeline de importação de arte, lote 1 gerado e importado, clipes e Animators criados, cena `Scenes/M0_Test.unity` com tudo animando. 2 testes de EditMode passam.
@@ -14,6 +14,8 @@ M5 (Casas e relíquias), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **M3 · Batalha.** `BattleSystem` (Início, TurnoJogador, TurnoInimigo, Vitória, Derrota), `DeckManager` (compra, reembaralho, descarte, esgotar), `DamageCalc`/`ElementRules`, efeitos de carta e de inimigo como classes pequenas (`DealDamage`, `GainShield`, `ApplyBurn`, `ApplyWeak`, `Heal`, `Stun`; `EnemyAttack`, `EnemyShield`, `EnemyHealAlly`, `EnemySummon`...), IA em `EnemyBrain`. Cena `Scenes/Battle.unity` com `BattleController` (atores animados, barras de vida, status, intenções com ícone e dano, mão de cartas com hover, alvo por clique, energia, contadores, números flutuantes "Eficaz!", painel de vitória/derrota). Animation Events `OnImpact` (quadro 4 dos ataques) e `OnDeathEnd`. 63 testes de EditMode de regra + 5 de PlayMode de fluxo (inclui "o dano só entra no quadro de impacto"). Screenshot em `Docs/screenshots/m3_battle.png`.
 
 - **M4 · Partida.** `RunState` (vida, deck, relíquias, moedas, casa atual e visitadas, filas de encontros e eventos sorteadas pela semente), `GameManager` persistente (`DontDestroyOnLoad`) e a troca Board ⇄ Battle: pisar numa casa de Batalha ou no Chefe lança a batalha pelo `BattleLauncher`; ao vencer volta ao tabuleiro com o painel de recompensa (10 a 15 moedas e 1 entre 3 cartas, ou pular); só então a casa fica cinza. Vida persiste entre batalhas. Derrota (ou vitória no Chefe, por ora) leva ao título. Painéis `Reward` e `Deck` ("Ver deck", com rolagem) em `UI/Panels.cs`. Cena `Title` (logo em texto, Jogar, Sair, volume, Peão e slimes animados). 11 testes de EditMode (RunState) e 14 de PlayMode (inclui os fluxos da partida). Screenshot em `Docs/screenshots/m4_recompensa.png`.
+
+- **M5 · Casas e relíquias.** Descanso (curar 30% ou melhorar 1 carta com seletor), Loja (3 cartas a 50, 1 relíquia a 100, cura 15 por 35, remover carta por 60; comprado some), Evento (os 3 eventos do GDD, com a escolha e o resultado em texto), Baú (30 moedas e 1 relíquia), tudo em painéis sobre o tabuleiro. As 5 relíquias funcionam: Base de Chumbo, Pincel Afiado, Ampulheta de Bolso e Tinta Seca como ganchos `IBattleHook` na batalha, e Dado Viciado no tabuleiro (botões "Andar" e "Rolar de novo"). Barra de relíquias no HUD com tooltip. Regras em C# puro (`RestLogic`, `ChestLogic`, `Shop`, `EventLogic`); painéis em `UI/TilePanels.cs`. 35 testes de EditMode novos (relíquias, descanso, baú, loja, eventos) e 10 de PlayMode novos clicando nos botões reais. Screenshot em `Docs/screenshots/m5_loja.png`.
 
 ## Decisões tomadas
 - **Pixel Perfect Camera** vem embutida no URP 17 (`UnityEngine.Rendering.Universal.PixelPerfectCamera`). Nenhum pacote novo foi instalado; `Packages/` e `ProjectSettings/` não foram alterados.
@@ -44,9 +46,13 @@ M5 (Casas e relíquias), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **Fim de partida (provisório até o M6):** `GameManager.EndRun(won)` carrega a cena `End` se existir; senão, o `Title`. `LastRunWon` guarda o resultado.
 - **Ouvinte de testes:** `Scripts/Editor/TestFailureLogger.cs` registra no Console `[TESTFAIL]` com a mensagem; o relatório completo fica em `~/Library/Application Support/DefaultCompany/prova-2bi-2sem-2026/TestResults.xml`.
 - **Testes de PlayMode:** o `GameManager` sobrevive às cenas; cada teste destrói o dele no início. Para vencer rápido, os testes põem 1 de vida nos inimigos.
+- **Regras que o GDD deixou em aberto (provisório):** Dado Viciado = pode rolar de novo 1 vez **por rolagem** (não 1 vez na partida inteira); perder vida em evento nunca mata (sobra 1); relíquia que já falta nenhuma vira 30 moedas; Cura da loja não vende com vida cheia; Remover carta não vende com deck de 1 carta; Base de Chumbo, Pincel Afiado e Ampulheta valem no primeiro turno da batalha (o escudo do herói zera no início de cada turno dele, então 5 de escudo dura até o primeiro turno dos inimigos); evento "Dado Gigante" usa o `RunState.Rng`.
+- **Seletor de cartas reutilizável:** `Panels.CardPicker` serve para melhorar, remover e (sem clique) ver o deck.
+- **Relíquias no HUD** mostram as iniciais (DV, BC...) até o lote 2 trazer os ícones.
 - Sprites de cartas, relíquias e do Rei Slime ficam nulos até o M6 (lote 2).
 
 ## Para o humano testar jogando
+- **Casas (M5):** jogar uma partida inteira passando por Loja, Descanso, Evento (os dois sorteados) e Baú. Conferir se os painéis cabem e leem bem, se os preços (50/100/35/60) fazem sentido com as moedas que você junta (10 a 15 por batalha, 30 no baú), se vale a pena a cura de 30% contra melhorar uma carta e se cada relíquia é perceptível na batalha (Base de Chumbo e Pincel Afiado aparecem como "Esc 5" e "Forç 1" na vida do herói).
 - **Partida (M4):** abrir `Scenes/Title.unity` e jogar do início: Jogar, rolar o dado, pisar numa Batalha, vencer, escolher a carta e voltar. Conferir se a troca de cena não parece brusca, se o painel de recompensa é claro, se "Ver deck" mostra o deck certo e se a derrota volta ao título. Ainda não há loja, descanso, evento, baú, relíquias nem a tela de vitória (M5/M6).
 - **Batalha (M3):** abrir `Scenes/Battle.unity`, dar Play e jogar uma batalha de 3 inimigos: ritmo das animações e do dano (o golpe acerta no quadro certo do ataque?), se a intenção sobre o inimigo é clara, se os números flutuantes e "Eficaz!" aparecem a tempo de ler, se o hover/enlargement das cartas atrapalha clicar nos inimigos atrás delas, se a mão cobre demais os inimigos, se 3 de energia e 5 cartas dão um turno interessante.
 - A mão ocupa a parte de baixo e as barras de vida dos inimigos ficam logo acima dela; ajustar se parecer apertado.

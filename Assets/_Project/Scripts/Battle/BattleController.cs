@@ -78,7 +78,6 @@ namespace XequeDeTinta.Battle
             BuildStage();
             BuildHud();
             Sys.Begin();
-            foreach (var h in Sys.Hooks) { /* relíquias (M5) ligam aqui */ }
             SetSpeed();
             StartCoroutine(OpeningRoutine());
         }

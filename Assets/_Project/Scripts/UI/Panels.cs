@@ -50,18 +50,25 @@ namespace XequeDeTinta.UI
             return overlay.gameObject;
         }
 
-        /// <summary>Lista de todas as cartas do deck, com rolagem.</summary>
-        public static GameObject Deck(Transform canvas, IReadOnlyList<CardInstance> deck, Action onClose)
+        /// <summary>Lista de todas as cartas do deck, com rolagem (só consulta).</summary>
+        public static GameObject Deck(Transform canvas, IReadOnlyList<CardInstance> deck, Action onClose) =>
+            CardPicker(canvas, $"Seu deck ({deck.Count} cartas)", deck, null, onClose, "Fechar");
+
+        /// <summary>
+        /// Grade rolável de cartas. Com onPick, clicar numa carta a escolhe; sem ele, é só consulta.
+        /// onCancel fecha sem escolher.
+        /// </summary>
+        public static GameObject CardPicker(Transform canvas, string titleText, IReadOnlyList<CardInstance> cards,
+                                            Action<CardInstance> onPick, Action onCancel, string cancelLabel)
         {
-            var overlay = Overlay(canvas, "PainelDeck");
+            var overlay = Overlay(canvas, "PainelCartas");
             var panel = UIFactory.CreatePanel("Painel", overlay, new Vector2(0.5f, 0.5f), new Vector2(560, 300), Vector2.zero);
 
-            var title = UIFactory.CreateText("Titulo", panel, $"Seu deck ({deck.Count} cartas)", 12, Palette.Gold);
+            var title = UIFactory.CreateText("Titulo", panel, titleText, 12, Palette.Gold);
             title.rectTransform.anchorMin = new Vector2(0, 1); title.rectTransform.anchorMax = new Vector2(1, 1);
             title.rectTransform.pivot = new Vector2(0.5f, 1);
             title.rectTransform.sizeDelta = new Vector2(0, 16); title.rectTransform.anchoredPosition = new Vector2(0, -8);
 
-            // Área rolável.
             var viewport = UIFactory.Rect("Viewport", panel, Vector2.zero, Vector2.one, new Vector2(8, 34), new Vector2(-8, -30));
             viewport.gameObject.AddComponent<RectMask2D>();
             var vimg = viewport.gameObject.AddComponent<Image>();
@@ -70,21 +77,22 @@ namespace XequeDeTinta.UI
             const float scale = 0.8f;
             float cw = CardView.Width * scale + 6f, ch = CardView.Height * scale + 6f;
             int cols = Mathf.Max(1, Mathf.FloorToInt((560f - 16f) / cw));
-            int rows = Mathf.CeilToInt(deck.Count / (float)cols);
+            int rows = Mathf.CeilToInt(cards.Count / (float)cols);
 
             var content = UIFactory.Rect("Conteudo", viewport, new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
             content.pivot = new Vector2(0.5f, 1);
             content.sizeDelta = new Vector2(0, Mathf.Max(rows * ch, 1f));
             content.anchoredPosition = Vector2.zero;
 
-            for (int i = 0; i < deck.Count; i++)
+            for (int i = 0; i < cards.Count; i++)
             {
-                var cv = CardView.Create(content, deck[i], Vector2.zero);
+                var card = cards[i];
+                var cv = CardView.Create(content, card, Vector2.zero);
                 var rt = cv.Rect;
                 rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0, 1);
                 rt.localScale = new Vector3(scale, scale, 1f);
-                float x = (i % cols) * cw + 4f, y = -(i / cols) * ch - 2f;
-                rt.anchoredPosition = new Vector2(x, y);
+                rt.anchoredPosition = new Vector2((i % cols) * cw + 4f, -(i / cols) * ch - 2f);
+                if (onPick != null) cv.Clicked += _ => onPick(card);
             }
 
             var scroll = viewport.gameObject.AddComponent<ScrollRect>();
@@ -93,7 +101,7 @@ namespace XequeDeTinta.UI
             scroll.movementType = ScrollRect.MovementType.Clamped;
             scroll.scrollSensitivity = 20f;
 
-            UIFactory.CreateButton("Fechar", panel, "Fechar", new Vector2(0.5f, 0), new Vector2(80, 18), new Vector2(0, 8), () => onClose());
+            UIFactory.CreateButton("Fechar", panel, cancelLabel, new Vector2(0.5f, 0), new Vector2(80, 18), new Vector2(0, 8), () => onCancel?.Invoke());
             return overlay.gameObject;
         }
     }
