@@ -65,6 +65,7 @@ namespace XequeDeTinta.Board
         RelicBar relicBar;
         int rollDecision;           // 0 esperando, 1 andar, 2 rolar de novo
         Canvas hudCanvas;
+        RectTransform rollFrame;
         Camera cam;
         int chosen = -1;
         Sprite dotSprite, arrowSprite;
@@ -177,9 +178,11 @@ namespace XequeDeTinta.Board
         {
             var canvas = UIFactory.CreateCanvas("HUD", 10, transform);
             hudCanvas = canvas;
+            var frame = UIFactory.CreateFrame(canvas);
+            rollFrame = frame;   // a interface ancora no quadro 640x360, não nas bordas da janela
             UIFactory.EnsureEventSystem();
 
-            statusText = UIFactory.CreateText("Status", canvas.transform, "", 8, Palette.Cream, TextAlignmentOptions.TopLeft, false);
+            statusText = UIFactory.CreateText("Status", frame, "", 8, Palette.Cream, TextAlignmentOptions.TopLeft, false);
             statusText.rectTransform.anchorMin = new Vector2(0, 1); statusText.rectTransform.anchorMax = new Vector2(0, 1);
             statusText.rectTransform.pivot = new Vector2(0, 1);
             statusText.rectTransform.sizeDelta = new Vector2(100, 14);
@@ -188,31 +191,31 @@ namespace XequeDeTinta.Board
             var art = UIArt.Get();
             if (art != null && art.coin != null)
             {
-                var ic = UIFactory.Anchored("IconeMoeda", canvas.transform, new Vector2(0, 1), new Vector2(16, 16), new Vector2(112, -6));
+                var ic = UIFactory.Anchored("IconeMoeda", frame, new Vector2(0, 1), new Vector2(16, 16), new Vector2(112, -6));
                 ic.pivot = new Vector2(0, 1);
                 var img = ic.gameObject.AddComponent<Image>(); img.sprite = art.coin; img.raycastTarget = false; img.preserveAspect = true;
             }
-            coinText = UIFactory.CreateText("Moedas", canvas.transform, "", 8, Palette.Gold, TextAlignmentOptions.TopLeft, false);
+            coinText = UIFactory.CreateText("Moedas", frame, "", 8, Palette.Gold, TextAlignmentOptions.TopLeft, false);
             coinText.rectTransform.anchorMin = coinText.rectTransform.anchorMax = new Vector2(0, 1);
             coinText.rectTransform.pivot = new Vector2(0, 1);
             coinText.rectTransform.sizeDelta = new Vector2(60, 14);
             coinText.rectTransform.anchoredPosition = new Vector2(132, -8);
 
-            messageText = UIFactory.CreateText("Mensagem", canvas.transform, "", 8, Palette.Gold, TextAlignmentOptions.Top);
+            messageText = UIFactory.CreateText("Mensagem", frame, "", 8, Palette.Gold, TextAlignmentOptions.Top);
             messageText.rectTransform.anchorMin = new Vector2(0.5f, 1); messageText.rectTransform.anchorMax = new Vector2(0.5f, 1);
             messageText.rectTransform.pivot = new Vector2(0.5f, 1);
             messageText.rectTransform.sizeDelta = new Vector2(420, 24);
             messageText.rectTransform.anchoredPosition = new Vector2(0, -30);
 
-            rollButton = UIFactory.CreateButton("Rolar", canvas.transform, "Rolar dado (Espaço)",
+            rollButton = UIFactory.CreateButton("Rolar", frame, "Rolar dado (Espaço)",
                 new Vector2(0.5f, 0), new Vector2(200, 20), new Vector2(0, 8), RollDice);
-            walkButton = UIFactory.CreateButton("Andar", canvas.transform, "Andar (Espaço)",
+            walkButton = UIFactory.CreateButton("Andar", frame, "Andar (Espaço)",
                 new Vector2(0.5f, 0), new Vector2(130, 20), new Vector2(-70, 8), ConfirmRoll);
-            rerollButton = UIFactory.CreateButton("RolarDeNovo", canvas.transform, "Rolar de novo",
+            rerollButton = UIFactory.CreateButton("RolarDeNovo", frame, "Rolar de novo",
                 new Vector2(0.5f, 0), new Vector2(130, 20), new Vector2(70, 8), RerollOnce);
             walkButton.gameObject.SetActive(false); rerollButton.gameObject.SetActive(false);
-            relicBar = RelicBar.Create(canvas.transform);
-            UIFactory.CreateButton("VerDeck", canvas.transform, "Ver deck",
+            relicBar = RelicBar.Create(frame);
+            UIFactory.CreateButton("VerDeck", frame, "Ver deck",
                 new Vector2(1, 1), new Vector2(70, 18), new Vector2(-8, -8), OpenDeck);
             RefreshHud();
         }
@@ -294,6 +297,33 @@ namespace XequeDeTinta.Board
         public void ConfirmRoll() { if (State == BoardState.Confirming) rollDecision = 1; }
         public void RerollOnce() { if (State == BoardState.Confirming) rollDecision = 2; }
 
+        TextMeshProUGUI bigRoll;
+        Coroutine bigRollRoutine;
+
+        /// <summary>Mostra o número tirado, grande, ao lado do dado por ~1 s.</summary>
+        void ShowBigRoll(int n)
+        {
+            if (bigRoll == null)
+            {
+                bigRoll = UIFactory.CreateText("NumeroDado", rollFrame, "", 24, Palette.Gold, TextAlignmentOptions.Left, false);
+                var r = bigRoll.rectTransform;
+                r.anchorMin = r.anchorMax = Vector2.zero; r.pivot = new Vector2(0, 0.5f);
+                r.sizeDelta = new Vector2(60, 30);
+                // Dado em (0, -3,4) no mundo = (320, 71) no quadro; o número fica à direita dele.
+                r.anchoredPosition = new Vector2(320f + 44f, 71f);
+            }
+            if (bigRollRoutine != null) StopCoroutine(bigRollRoutine);
+            bigRollRoutine = StartCoroutine(BigRollRoutine(n));
+        }
+
+        IEnumerator BigRollRoutine(int n)
+        {
+            bigRoll.text = n.ToString();
+            bigRoll.gameObject.SetActive(true);
+            yield return new WaitForSeconds(Dur(1f));
+            bigRoll.gameObject.SetActive(false);
+        }
+
         IEnumerator RollOnce()
         {
             SetState(BoardState.Rolling);
@@ -302,7 +332,7 @@ namespace XequeDeTinta.Board
             float t = 0;
             while (t < Dur(rollSeconds))
             {
-                diceRenderer.sprite = diceFaces[UnityEngine.Random.Range(0, diceFaces.Length)];
+                diceRenderer.sprite = diceFaces[UnityEngine.Random.Range(0, Mathf.Clamp(config.diceSides, 1, diceFaces.Length))];
                 diceRenderer.transform.localRotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(-12f, 12f));
                 float step = Dur(0.06f);
                 yield return new WaitForSeconds(step);
@@ -312,6 +342,7 @@ namespace XequeDeTinta.Board
             LastRoll = DiceRoller.Roll(Rng, config.diceSides);
             diceRenderer.sprite = diceFaces[Mathf.Clamp(LastRoll, 1, diceFaces.Length) - 1];
             SetMessage($"Tirou {LastRoll}!");
+            ShowBigRoll(LastRoll);
             RollFinished?.Invoke(LastRoll);
             yield return new WaitForSeconds(Dur(0.25f));
         }

@@ -80,8 +80,8 @@ namespace XequeDeTinta.UI
             bandImg.color = ElementColor(card.Element); bandImg.raycastTarget = false;
 
             nameText = UIFactory.CreateText("Nome", band, card.Name, 8, Color.white);
-            nameText.rectTransform.offsetMin = new Vector2(19, 1); nameText.rectTransform.offsetMax = new Vector2(-2, -1);
-            nameText.enableAutoSizing = true; nameText.fontSizeMin = 5; nameText.fontSizeMax = 8;
+            nameText.rectTransform.offsetMin = new Vector2(22, 1); nameText.rectTransform.offsetMax = new Vector2(-3, -1);
+            nameText.enableAutoSizing = true; nameText.fontSizeMin = 5; nameText.fontSizeMax = 7;
 
             // Custo em um selo dourado no canto.
             var badge = UIFactory.Anchored("Custo", inner, new Vector2(0, 1), new Vector2(15, 15), new Vector2(2, -4));
@@ -101,8 +101,8 @@ namespace XequeDeTinta.UI
             }
 
             descText = UIFactory.CreateText("Descricao", inner, card.Description, 8, Palette.Purple, TextAlignmentOptions.Top);
-            descText.rectTransform.offsetMin = new Vector2(4, 16); descText.rectTransform.offsetMax = new Vector2(-4, descTop);
-            descText.enableAutoSizing = true; descText.fontSizeMin = 5; descText.fontSizeMax = 8;
+            descText.rectTransform.offsetMin = new Vector2(2, 15); descText.rectTransform.offsetMax = new Vector2(-2, descTop);
+            descText.enableAutoSizing = true; descText.fontSizeMin = 5; descText.fontSizeMax = 7; descText.lineSpacing = -10f;
 
             string foot = ElementName(card.Element) + (card.Exhaust ? " · Esgota" : "");
             elementText = UIFactory.CreateText("Rodape", inner, foot, 8, ElementColor(card.Element), TextAlignmentOptions.Bottom);

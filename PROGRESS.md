@@ -88,6 +88,14 @@ Todos os marcos (M0 a M8) concluídos. Resta só a verificação humana jogando 
 - **Teste por cenas `FullRunBotTests`:** marcado `[Explicit]`: o robô que clica nas cenas congela o Editor logo após o primeiro dado e não achei a causa. A partida inteira continua coberta pela simulação em lógica pura e cada fluxo de cena tem teste próprio (31 de PlayMode, todos verdes). Reativar só depois de investigar.
 - README atualizado.
 
+## Correções pós-M8: dado e layout da batalha
+- **Dado:** as 6 faces agora são dados **chapados**, vistos de frente (quadrado creme de cantos arredondados, contorno escuro de 1 px, pontos roxos na posição clássica), gerados por código em `Scripts/Editor/DiceFaceBuilder.cs` (menu `Xeque > Dado > Gerar faces chapadas`), idênticos entre si e sem gastar o PixelLab. Os cubos 3D antigos estão em `Art/_Rejected/dice_face_N_cubo3d.png`. A rolagem do tabuleiro sorteia só faces de 1 a `diceSides` (3) e, ao parar, mostra o número grande ao lado do dado por ~1 s além da mensagem do topo. Testes: `DiceFaceTests` (pontos, identidade das faces, simetria) e `DiceFlowTests` (faces da rolagem, número grande).
+- **Causa do desalinhamento em janela larga:** a Pixel Perfect Camera usa zoom **inteiro** e o canvas escalava de forma contínua, então a interface não casava com o cenário. `CanvasMatch` agora aplica ao canvas o mesmo zoom inteiro da câmera (`CanvasScaler` em ConstantPixelSize), e `UIFactory.CreateFrame` cria um **quadro 640x360** centralizado onde ancora todo o HUD da batalha e do tabuleiro (nada nas bordas da janela).
+- **Batalha:** faixa inferior de 100 px só para a mão (cartas a 0,76x em leque, sobem e aumentam no hover; a carta esperando alvo sobe um pouco); energia à esquerda da mão com a pilha de Compra, pilha de Descarte e botão "Encerrar turno" (124 px, inteiro) à direita; cada personagem tem seu bloco logo abaixo (barra centralizada, número, ícones de escudo/status); a intenção fica logo acima da cabeça de cada inimigo; posições dos inimigos por quantidade (1, 2, 3, ou Rei Slime + 2 Mirins) com espaçamento mínimo de ~2,4 unidades; texto das cartas em 7 px no máximo, sem quebras ruins, nome afastado do custo.
+- **Screenshots** em `Docs/screenshots/`: `m9_batalha_1280x720.png` (3 slimes), `m9_chefe_1280x720.png` (Rei Slime + Mirins), `m9_batalha_larga.png` e `m9_chefe_larga.png` (render 1656x720 ≈ 2,3:1, pela câmera com a interface sobreposta).
+- Testes: 32 de PlayMode e os de EditMode passam; Console sem erros nem warnings.
+- Observação: em janelas pequenas ou largas o zoom inteiro pode ser 1x (tudo pequeno); isso é o comportamento do pixel perfect. Em 1280x720 o zoom é 2x e em 1920x1080 é 3x.
+
 ## Pendências
 - Ícones de intenção (16x16) e ícones das casas ainda não foram avaliados em tamanho real dentro do jogo.
 - Quadro de impacto exato das animações (Animation Event) a ligar no M3.

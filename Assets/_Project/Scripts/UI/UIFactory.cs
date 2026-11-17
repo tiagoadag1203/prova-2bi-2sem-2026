@@ -20,6 +20,29 @@ namespace XequeDeTinta.UI
     }
 
     /// <summary>
+    /// Escala o canvas com o MESMO zoom inteiro que a Pixel Perfect Camera usa para o mundo (640x360 de referência),
+    /// para a interface casar com o cenário em qualquer janela, inclusive as largas.
+    /// </summary>
+    public class CanvasMatch : MonoBehaviour
+    {
+        CanvasScaler scaler;
+        void Awake() { scaler = GetComponent<CanvasScaler>(); Apply(); }
+        void Update() => Apply();
+
+        public static float Zoom()
+        {
+            float z = Mathf.Min(Screen.width / UIFactory.RefWidth, Screen.height / UIFactory.RefHeight);
+            return z >= 1f ? Mathf.Floor(z) : Mathf.Max(0.1f, z);
+        }
+
+        void Apply()
+        {
+            if (scaler == null || Screen.height <= 0) return;
+            scaler.scaleFactor = Zoom();
+        }
+    }
+
+    /// <summary>
     /// Constrói elementos de uGUI por código, no tamanho de referência 640x360.
     /// As telas ficam finas: cenas e painéis só chamam isto.
     /// </summary>
@@ -48,11 +71,19 @@ namespace XequeDeTinta.UI
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = sortingOrder;
             var scaler = go.GetComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(RefWidth, RefHeight);
-            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            scaler.matchWidthOrHeight = 0.5f;
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;   // CanvasMatch dá o mesmo zoom da Pixel Perfect Camera
+            go.AddComponent<CanvasMatch>();
             return canvas;
+        }
+
+        /// <summary>
+        /// Quadro de 640x360 centralizado no canvas. Toda a interface de jogo ancora nele (e não nas bordas da janela),
+        /// para casar com o cenário em qualquer proporção.
+        /// </summary>
+        public static RectTransform CreateFrame(Canvas canvas)
+        {
+            var f = Anchored("Quadro", canvas.transform, new Vector2(0.5f, 0.5f), new Vector2(RefWidth, RefHeight), Vector2.zero);
+            return f;
         }
 
         /// <summary>Garante um EventSystem com o módulo do Input System.</summary>

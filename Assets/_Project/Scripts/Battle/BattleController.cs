@@ -39,13 +39,15 @@ namespace XequeDeTinta.Battle
         public event Action<BattleResult> Finished;
 
         // Cena
-        static readonly Vector2 HeroFeet = new Vector2(-5.6f, -0.9f);
+        static readonly Vector2 HeroFeet = new Vector2(-5.6f, -0.7f);
+        const float HandBand = 100f;   // faixa inferior (px do quadro 640x360) reservada para a mão
         ActorView heroView;
         readonly Dictionary<Combatant, ActorView> views = new Dictionary<Combatant, ActorView>();
         readonly Dictionary<Combatant, ActorHud> huds = new Dictionary<Combatant, ActorHud>();
 
         // HUD
         Canvas canvas;
+        RectTransform frame;     // quadro 640x360 onde a interface ancora
         RectTransform handRoot, floaters;
         TextMeshProUGUI messageText, energyText, drawText, discardText;
         Button endTurnButton;
@@ -78,6 +80,7 @@ namespace XequeDeTinta.Battle
             Sys = new BattleSystem(setup);
             arrowSprite = MakeArrow();
             canvas = UIFactory.CreateCanvas("BattleHUD", 10, transform);
+            frame = UIFactory.CreateFrame(canvas);
             UIFactory.EnsureEventSystem();
             BuildStage();
             BuildHud();
@@ -124,10 +127,24 @@ namespace XequeDeTinta.Battle
         static Vector2 ToCanvas(Vector2 world) => new Vector2((world.x + 10f) * 32f, (world.y + 5.625f) * 32f);
 
         bool bossLayout;
-        static readonly float[] BossSlots = { 3.8f, 7.4f, 9.1f };
+        int initialEnemies = 1;
 
-        Vector2 EnemyFeet(int index) =>
-            bossLayout ? new Vector2(BossSlots[Mathf.Min(index, BossSlots.Length - 1)], -0.9f) : new Vector2(1.9f + 2.9f * index, -0.9f);
+        // Posições X (mundo) dos inimigos, com espaçamento mínimo de ~2,4 unidades (76 px) para nada se sobrepor.
+        static readonly float[] BossSlots = { 2.4f, 6.2f, 8.6f };               // Rei Slime + 2 Mirins
+        static readonly float[][] Slots =
+        {
+            new[] { 4.8f },
+            new[] { 3.2f, 6.6f },
+            new[] { 1.6f, 4.9f, 8.2f },
+        };
+
+        Vector2 EnemyFeet(int index)
+        {
+            float x = bossLayout
+                ? BossSlots[Mathf.Min(index, BossSlots.Length - 1)]
+                : Slots[Mathf.Clamp(initialEnemies, 1, 3) - 1][Mathf.Min(index, Mathf.Clamp(initialEnemies, 1, 3) - 1)];
+            return new Vector2(x, -0.7f);
+        }
 
         /// <summary>Altura do topo do sprite (para intenções, números e seta), contando a escala.</summary>
         static float TopOf(ActorView v) => v.transform.position.y + (v.Renderer != null ? v.Renderer.bounds.size.y : 2f);
@@ -159,6 +176,7 @@ namespace XequeDeTinta.Battle
                 ground.transform.localScale = new Vector3(80f, 4.65f, 1f);
             }
             bossLayout = Sys.Enemies.Count > 0 && Sys.Enemies[0].Data.isBoss;
+            initialEnemies = Sys.Enemies.Count;
 
             heroView = CreateActor("Heroi", Sys.Hero, heroSprite, heroAnimator, 3f, HeroFeet, 2);
             AddHud(Sys.Hero, false);
@@ -190,76 +208,90 @@ namespace XequeDeTinta.Battle
         {
             var feet = views[c].transform.position;
             var h = new ActorHud();
-            h.root = UIFactory.Anchored("Hud_" + c.Name, canvas.transform, Vector2.zero, new Vector2(72, 34), ToCanvas(new Vector2(feet.x, feet.y - 0.2f)));
+            // Bloco logo abaixo do personagem, centrado nele: barra, número, escudo/status.
+            h.root = UIFactory.Anchored("Hud_" + c.Name, frame, Vector2.zero, new Vector2(76, 40), Vector2.zero);
             h.root.pivot = new Vector2(0.5f, 1f);
-            h.root.anchoredPosition = ToCanvas(new Vector2(feet.x, feet.y - 0.2f));
+            h.root.anchoredPosition = ToCanvas(new Vector2(feet.x, feet.y - 0.1f));
 
-            var bg = UIFactory.Rect("BarraFundo", h.root, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -7), Vector2.zero).gameObject.AddComponent<Image>();
+            var barBg = UIFactory.Anchored("BarraFundo", h.root, new Vector2(0.5f, 1), new Vector2(58, 8), Vector2.zero);
+            barBg.pivot = new Vector2(0.5f, 1);
+            var bg = barBg.gameObject.AddComponent<Image>();
             bg.color = new Color(0.1f, 0.05f, 0.15f, 1f); bg.raycastTarget = false;
-            var fillRt = UIFactory.Rect("Barra", h.root, new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, -6), new Vector2(-1, -1));
+            var fillRt = UIFactory.Rect("Barra", barBg, Vector2.zero, Vector2.one, new Vector2(1, 1), new Vector2(-1, -1));
             h.fill = fillRt.gameObject.AddComponent<Image>();
             h.fill.color = enemy ? Palette.Red : Palette.Green; h.fill.raycastTarget = false;
             h.fill.type = Image.Type.Filled; h.fill.fillMethod = Image.FillMethod.Horizontal;
 
             h.hp = UIFactory.CreateText("Vida", h.root, "", 8, Palette.Cream, TextAlignmentOptions.Top, false);
-            h.hp.rectTransform.anchorMin = new Vector2(0, 1); h.hp.rectTransform.anchorMax = new Vector2(1, 1);
-            h.hp.rectTransform.offsetMin = new Vector2(-20, -18); h.hp.rectTransform.offsetMax = new Vector2(20, -8);
+            var hr = h.hp.rectTransform;
+            hr.anchorMin = hr.anchorMax = new Vector2(0.5f, 1); hr.pivot = new Vector2(0.5f, 1);
+            hr.sizeDelta = new Vector2(76, 10); hr.anchoredPosition = new Vector2(0, -9);
 
-            h.statusRow = UIFactory.Rect("LinhaStatus", h.root, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(-40, -36), new Vector2(40, -20));
+            h.statusRow = UIFactory.Anchored("LinhaStatus", h.root, new Vector2(0.5f, 1), new Vector2(76, 16), new Vector2(0, -21));
+            h.statusRow.pivot = new Vector2(0.5f, 1);
             h.status = UIFactory.CreateText("Status", h.root, "", 8, Palette.Cream, TextAlignmentOptions.Top, false);
-            h.status.rectTransform.anchorMin = new Vector2(0, 1); h.status.rectTransform.anchorMax = new Vector2(1, 1);
-            h.status.rectTransform.offsetMin = new Vector2(-30, -34); h.status.rectTransform.offsetMax = new Vector2(30, -19);
+            var sr = h.status.rectTransform;
+            sr.anchorMin = sr.anchorMax = new Vector2(0.5f, 1); sr.pivot = new Vector2(0.5f, 1);
+            sr.sizeDelta = new Vector2(76, 16); sr.anchoredPosition = new Vector2(0, -21);
 
             if (enemy)
             {
+                // Intenção logo acima da cabeça deste inimigo.
                 var headWorld = new Vector2(feet.x, TopOf(views[c]) + 0.1f);
-                var ir = UIFactory.Anchored("Intencao", canvas.transform, Vector2.zero, new Vector2(60, 32), ToCanvas(headWorld));
+                var ir = UIFactory.Anchored("Intencao", frame, Vector2.zero, new Vector2(56, 32), Vector2.zero);
+                ir.pivot = new Vector2(0.5f, 0f);
+                ir.anchoredPosition = ToCanvas(headWorld);
                 h.intentRoot = ir.gameObject;
-                var icon = UIFactory.Rect("Icone", ir, new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(0, -16), new Vector2(32, 16));
+                var icon = UIFactory.Rect("Icone", ir, new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(2, -16), new Vector2(34, 16));
                 h.intentIcon = icon.gameObject.AddComponent<Image>();
                 h.intentIcon.raycastTarget = false; h.intentIcon.preserveAspect = true;
                 h.intentText = UIFactory.CreateText("Numero", ir, "", 12, Palette.Gold, TextAlignmentOptions.Left, false);
-                h.intentText.rectTransform.offsetMin = new Vector2(34, 0);
+                h.intentText.rectTransform.offsetMin = new Vector2(36, 0);
             }
             huds[c] = h;
         }
 
+        /// <summary>Pilha de cartas (Compra/Descarte): caixa com rótulo e número grande.</summary>
+        TextMeshProUGUI BuildPile(string name, string label, Vector2 anchor, Vector2 pos)
+        {
+            var box = UIFactory.Anchored("Pilha" + name, frame, anchor, new Vector2(56, 38), pos);
+            var border = box.gameObject.AddComponent<Image>(); border.color = Palette.Gold; border.raycastTarget = false;
+            var inner = UIFactory.Rect("Fundo", box, Vector2.zero, Vector2.one, new Vector2(2, 2), new Vector2(-2, -2));
+            var bg = inner.gameObject.AddComponent<Image>(); bg.color = Palette.Purple; bg.raycastTarget = false;
+            var lt = UIFactory.CreateText("Rotulo", inner, label, 8, Palette.Cream, TextAlignmentOptions.Top, false);
+            lt.rectTransform.offsetMin = new Vector2(0, 14); lt.rectTransform.offsetMax = new Vector2(0, -2);
+            var n = UIFactory.CreateText("Numero", inner, "0", 12, Palette.Gold, TextAlignmentOptions.Center, false);
+            n.rectTransform.offsetMin = new Vector2(0, 1); n.rectTransform.offsetMax = new Vector2(0, -14);
+            return n;
+        }
+
         void BuildHud()
         {
-            messageText = UIFactory.CreateText("Mensagem", canvas.transform, "", 8, Palette.Gold, TextAlignmentOptions.Top);
+            messageText = UIFactory.CreateText("Mensagem", frame, "", 8, Palette.Gold, TextAlignmentOptions.Top);
             var mr = messageText.rectTransform;
             mr.anchorMin = mr.anchorMax = new Vector2(0.5f, 1); mr.pivot = new Vector2(0.5f, 1);
             mr.sizeDelta = new Vector2(420, 14); mr.anchoredPosition = new Vector2(0, -8);
 
-            handRoot = UIFactory.Anchored("Mao", canvas.transform, new Vector2(0.5f, 0), new Vector2(640, 130), Vector2.zero);
-            floaters = UIFactory.Rect("Flutuantes", canvas.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            // Faixa da mão: cartas sempre dentro dela; o campo fica acima.
+            handRoot = UIFactory.Anchored("Mao", frame, new Vector2(0.5f, 0), new Vector2(640, HandBand), Vector2.zero);
+            floaters = UIFactory.Rect("Flutuantes", frame, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-            // Energia
-            var orb = UIFactory.Anchored("Energia", canvas.transform, new Vector2(0, 0), new Vector2(40, 40), new Vector2(10, 124));
+            // Zona esquerda da mão: energia e pilha de compra.
+            var orb = UIFactory.Anchored("Energia", frame, new Vector2(0, 0), new Vector2(32, 32), new Vector2(12, 56));
             var orbImg = orb.gameObject.AddComponent<Image>();
             orbImg.raycastTarget = false;
-            if (Art != null && Art.energyOrb != null) { orbImg.sprite = Art.energyOrb; orbImg.preserveAspect = true; }
-            else orbImg.color = Palette.Gold;
-            if (Art != null && Art.energyOrb != null)
-            {
-                // Com a arte do orbe, o número vai ao lado, em creme, para não sumir no miolo escuro.
-                energyText = UIFactory.CreateText("Valor", canvas.transform, "3/3", 12, Palette.Gold, TextAlignmentOptions.Left, false);
-                var er = energyText.rectTransform;
-                er.anchorMin = er.anchorMax = Vector2.zero; er.pivot = new Vector2(0, 0.5f);
-                er.sizeDelta = new Vector2(60, 16); er.anchoredPosition = new Vector2(52, 144);
-            }
-            else energyText = UIFactory.CreateText("Valor", orb, "3/3", 10, Palette.Purple);
+            bool hasOrb = Art != null && Art.energyOrb != null;
+            if (hasOrb) { orbImg.sprite = Art.energyOrb; orbImg.preserveAspect = true; } else orbImg.color = Palette.Gold;
+            energyText = UIFactory.CreateText("Valor", frame, "3/3", 12, Palette.Gold, TextAlignmentOptions.Left, false);
+            var er = energyText.rectTransform;
+            er.anchorMin = er.anchorMax = Vector2.zero; er.pivot = new Vector2(0, 0.5f);
+            er.sizeDelta = new Vector2(60, 16); er.anchoredPosition = new Vector2(48, 72);
+            drawText = BuildPile("Compra", "Compra", new Vector2(0, 0), new Vector2(12, 8));
 
-            drawText = UIFactory.CreateText("Compra", canvas.transform, "", 8, Palette.Cream, TextAlignmentOptions.Left, false);
-            var dr = drawText.rectTransform; dr.anchorMin = dr.anchorMax = Vector2.zero; dr.pivot = new Vector2(0, 0);
-            dr.sizeDelta = new Vector2(110, 10); dr.anchoredPosition = new Vector2(8, 6);
-
-            discardText = UIFactory.CreateText("Descarte", canvas.transform, "", 8, Palette.Cream, TextAlignmentOptions.Right, false);
-            var sr = discardText.rectTransform; sr.anchorMin = sr.anchorMax = new Vector2(1, 0); sr.pivot = new Vector2(1, 0);
-            sr.sizeDelta = new Vector2(110, 10); sr.anchoredPosition = new Vector2(-8, 6);
-
-            endTurnButton = UIFactory.CreateButton("EncerrarTurno", canvas.transform, "Encerrar turno",
-                new Vector2(1, 0), new Vector2(112, 20), new Vector2(-8, 124), EndTurn);
+            // Zona direita: pilha de descarte e botão de encerrar o turno.
+            discardText = BuildPile("Descarte", "Descarte", new Vector2(1, 0), new Vector2(-12, 8));
+            endTurnButton = UIFactory.CreateButton("EncerrarTurno", frame, "Encerrar turno",
+                new Vector2(1, 0), new Vector2(124, 24), new Vector2(-8, 56), EndTurn);
         }
 
         // ---------- Atualização do HUD ----------
@@ -303,7 +335,7 @@ namespace XequeDeTinta.Battle
             if (c.Strength > 0) active.Add((3, c.Strength));
             if (c.Stunned) active.Add((4, 0));
 
-            const float step = 30f;
+            const float step = 28f;
             float start = -(active.Count - 1) * step / 2f;
             for (int i = 0; i < active.Count; i++)
             {
@@ -345,8 +377,8 @@ namespace XequeDeTinta.Battle
                 }
             }
             energyText.text = Sys.Energy + "/" + Sys.Rules.EnergyPerTurn;
-            drawText.text = "Compra " + Sys.Deck.DrawPile.Count;
-            discardText.text = "Descarte " + Sys.Deck.DiscardPile.Count;
+            drawText.text = Sys.Deck.DrawPile.Count.ToString();
+            discardText.text = Sys.Deck.DiscardPile.Count.ToString();
             endTurnButton.interactable = !Busy && Sys.Phase == BattlePhase.PlayerTurn && pending == null;
         }
 
@@ -367,17 +399,38 @@ namespace XequeDeTinta.Battle
             LayoutHand();
         }
 
+        const float CardScale = 0.76f;
+
+        /// <summary>Cartas menores em leque dentro da faixa inferior; a carta sob o mouse sobe e aumenta.</summary>
         void LayoutHand()
         {
             int n = handViews.Count;
             if (n == 0) return;
-            float step = n > 1 ? Mathf.Min(CardView.Width + 4f, (560f - CardView.Width) / (n - 1)) : 0f;
+            float cardW = CardView.Width * CardScale;
+            float step = n > 1 ? Mathf.Min(cardW - 2f, (340f - cardW) / (n - 1)) : 0f;
+            float mid = (n - 1) / 2f;
             for (int i = 0; i < n; i++)
             {
                 var v = handViews[i];
-                bool up = v == hovered || v == pending;
-                v.Rect.anchoredPosition = new Vector2((i - (n - 1) / 2f) * step, up ? 18f : 2f);
-                v.Rect.localScale = up ? new Vector3(1.2f, 1.2f, 1f) : Vector3.one;
+                float off = i - mid;
+                if (v == hovered)
+                {
+                    v.Rect.anchoredPosition = new Vector2(off * step, 30f);
+                    v.Rect.localScale = new Vector3(1.2f, 1.2f, 1f);
+                    v.Rect.localRotation = Quaternion.identity;
+                }
+                else if (v == pending)
+                {
+                    v.Rect.anchoredPosition = new Vector2(off * step, 12f);
+                    v.Rect.localScale = new Vector3(0.95f, 0.95f, 1f);
+                    v.Rect.localRotation = Quaternion.identity;
+                }
+                else
+                {
+                    v.Rect.anchoredPosition = new Vector2(off * step, 9f - off * off * 0.8f);
+                    v.Rect.localScale = new Vector3(CardScale, CardScale, 1f);
+                    v.Rect.localRotation = Quaternion.Euler(0f, 0f, -off * 3f);
+                }
             }
             if (hovered != null) hovered.Rect.SetAsLastSibling();
             else if (pending != null) pending.Rect.SetAsLastSibling();
