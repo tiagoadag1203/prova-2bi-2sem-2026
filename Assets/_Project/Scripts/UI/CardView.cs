@@ -89,14 +89,35 @@ namespace XequeDeTinta.UI
             badgeImg.color = Palette.Gold; badgeImg.raycastTarget = false;
             costText = UIFactory.CreateText("N", badge, card.Cost.ToString(), 8, Palette.Purple);
 
+            // Ilustração da carta (32x32) logo abaixo da faixa do nome.
+            float descTop = -28f;
+            if (card.Data.art != null)
+            {
+                var artRt = UIFactory.Anchored("Arte", inner, new Vector2(0.5f, 1), new Vector2(32, 32), new Vector2(0, -27));
+                artRt.pivot = new Vector2(0.5f, 1);
+                var artImg = artRt.gameObject.AddComponent<Image>();
+                artImg.sprite = card.Data.art; artImg.raycastTarget = false; artImg.preserveAspect = true;
+                descTop = -62f;
+            }
+
             descText = UIFactory.CreateText("Descricao", inner, card.Description, 8, Palette.Purple, TextAlignmentOptions.Top);
-            descText.rectTransform.offsetMin = new Vector2(4, 16); descText.rectTransform.offsetMax = new Vector2(-4, -28);
+            descText.rectTransform.offsetMin = new Vector2(4, 16); descText.rectTransform.offsetMax = new Vector2(-4, descTop);
             descText.enableAutoSizing = true; descText.fontSizeMin = 5; descText.fontSizeMax = 8;
 
             string foot = ElementName(card.Element) + (card.Exhaust ? " · Esgota" : "");
             elementText = UIFactory.CreateText("Rodape", inner, foot, 8, ElementColor(card.Element), TextAlignmentOptions.Bottom);
             elementText.rectTransform.offsetMin = new Vector2(2, 2); elementText.rectTransform.offsetMax = new Vector2(-2, 14);
             elementText.enableAutoSizing = true; elementText.fontSizeMin = 5; elementText.fontSizeMax = 8;
+
+            var art = UIArt.Get();
+            var icon = art != null ? art.ElementIcon(card.Element) : null;
+            if (icon != null)
+            {
+                var ir = UIFactory.Anchored("ElementoIcone", inner, new Vector2(0, 0), new Vector2(12, 12), new Vector2(3, 3));
+                ir.pivot = new Vector2(0, 0);
+                var im = ir.gameObject.AddComponent<Image>();
+                im.sprite = icon; im.raycastTarget = false; im.preserveAspect = true;
+            }
         }
 
         /// <summary>Sem energia: carta escurecida (ainda clicável para dar o aviso).</summary>

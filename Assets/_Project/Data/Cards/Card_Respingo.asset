@@ -35,4 +35,4 @@ MonoBehaviour:
   inRewardPool: 1
   description: Causa 4 de dano e aplica Fraco 1.
   upgradedDescription: Causa 6 de dano e aplica Fraco 2.
-  art: {fileID: 0}
+  art: {fileID: 21300000, guid: 16dbe888611f84aca90b9b3f69c84c54, type: 3}

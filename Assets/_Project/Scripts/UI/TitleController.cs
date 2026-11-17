@@ -26,6 +26,22 @@ namespace XequeDeTinta.UI
         {
             GameManager.Ensure(config);
             Time.timeScale = 1f;
+            var art = UIArt.Get();
+            if (logo == null && art != null) logo = art.logo;
+            if (art != null && art.backgroundBoard != null)
+            {
+                var bg = new GameObject("Fundo", typeof(SpriteRenderer));
+                bg.transform.SetParent(transform, false);
+                var bsr = bg.GetComponent<SpriteRenderer>(); bsr.sprite = art.backgroundBoard; bsr.sortingOrder = -20;
+                var dim = new GameObject("Escurecer", typeof(SpriteRenderer));
+                dim.transform.SetParent(transform, false);
+                var dsr = dim.GetComponent<SpriteRenderer>();
+                var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
+                tex.SetPixel(0, 0, Color.white); tex.Apply();
+                dsr.sprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+                dsr.color = new Color(0.1f, 0.05f, 0.18f, 0.5f); dsr.sortingOrder = -19;
+                dim.transform.localScale = new Vector3(40f, 24f, 1f);
+            }
 
             foreach (var d in decor)
             {

@@ -17,4 +17,4 @@ MonoBehaviour:
   description: Pode rolar o dado de novo 1 vez.
   kind: 0
   value: 1
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 1d3d90725bbe4476781fb9573fad5659, type: 3}

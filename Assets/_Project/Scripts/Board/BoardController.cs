@@ -57,7 +57,7 @@ namespace XequeDeTinta.Board
         Transform pawn;
         Animator pawnAnim;
         SpriteRenderer diceRenderer;
-        TextMeshProUGUI statusText, messageText;
+        TextMeshProUGUI statusText, coinText, messageText;
         Button rollButton, walkButton, rerollButton;
         RelicBar relicBar;
         int rollDecision;           // 0 esperando, 1 andar, 2 rolar de novo
@@ -78,10 +78,12 @@ namespace XequeDeTinta.Board
             mover = new BoardMover(graph, Progress.CurrentTile);
             dotSprite = MakeDot();
             arrowSprite = MakeArrow();
+            BuildBackground();
             BuildTiles();
             BuildPawn();
             BuildDice();
             BuildHud();
+            PauseMenu.Attach(hudCanvas.transform, () => GameManager.Instance?.BackToTitle());
             SetState(BoardState.Idle);
             SetMessage("Role o dado para andar!");
             foreach (var id in Progress.Visited) tileRenderers[id].color = VisitedTint;
@@ -89,6 +91,22 @@ namespace XequeDeTinta.Board
         }
 
         // ---------- Construção ----------
+
+        void BuildBackground()
+        {
+            var art = UIArt.Get();
+            if (art == null || art.backgroundBoard == null) return;
+            var bg = new GameObject("Fundo", typeof(SpriteRenderer));
+            bg.transform.SetParent(transform, false);
+            var sr = bg.GetComponent<SpriteRenderer>();
+            sr.sprite = art.backgroundBoard; sr.sortingOrder = -20;
+            // Escurece para as casas e a interface se destacarem.
+            var dim = new GameObject("Escurecer", typeof(SpriteRenderer));
+            dim.transform.SetParent(transform, false);
+            var ds = dim.GetComponent<SpriteRenderer>();
+            ds.sprite = MakeDot(); ds.color = new Color(0.1f, 0.05f, 0.18f, 0.4f); ds.sortingOrder = -19;
+            dim.transform.localScale = new Vector3(40f * 32f, 24f * 32f, 1f);
+        }
 
         void BuildTiles()
         {
@@ -161,8 +179,21 @@ namespace XequeDeTinta.Board
             statusText = UIFactory.CreateText("Status", canvas.transform, "", 8, Palette.Cream, TextAlignmentOptions.TopLeft, false);
             statusText.rectTransform.anchorMin = new Vector2(0, 1); statusText.rectTransform.anchorMax = new Vector2(0, 1);
             statusText.rectTransform.pivot = new Vector2(0, 1);
-            statusText.rectTransform.sizeDelta = new Vector2(300, 14);
+            statusText.rectTransform.sizeDelta = new Vector2(100, 14);
             statusText.rectTransform.anchoredPosition = new Vector2(8, -8);
+
+            var art = UIArt.Get();
+            if (art != null && art.coin != null)
+            {
+                var ic = UIFactory.Anchored("IconeMoeda", canvas.transform, new Vector2(0, 1), new Vector2(16, 16), new Vector2(112, -6));
+                ic.pivot = new Vector2(0, 1);
+                var img = ic.gameObject.AddComponent<Image>(); img.sprite = art.coin; img.raycastTarget = false; img.preserveAspect = true;
+            }
+            coinText = UIFactory.CreateText("Moedas", canvas.transform, "", 8, Palette.Gold, TextAlignmentOptions.TopLeft, false);
+            coinText.rectTransform.anchorMin = coinText.rectTransform.anchorMax = new Vector2(0, 1);
+            coinText.rectTransform.pivot = new Vector2(0, 1);
+            coinText.rectTransform.sizeDelta = new Vector2(60, 14);
+            coinText.rectTransform.anchoredPosition = new Vector2(132, -8);
 
             messageText = UIFactory.CreateText("Mensagem", canvas.transform, "", 8, Palette.Gold, TextAlignmentOptions.Top);
             messageText.rectTransform.anchorMin = new Vector2(0.5f, 1); messageText.rectTransform.anchorMax = new Vector2(0.5f, 1);
@@ -185,7 +216,8 @@ namespace XequeDeTinta.Board
 
         public void RefreshHud()
         {
-            if (statusText != null && Run != null) statusText.text = $"Vida {Run.Hp}/{Run.MaxHp}   Moedas {Run.Coins}";
+            if (statusText != null && Run != null) statusText.text = $"Vida {Run.Hp}/{Run.MaxHp}";
+            if (coinText != null && Run != null) coinText.text = Run.Coins.ToString();
             if (relicBar != null && Run != null) relicBar.Rebuild(Run.Relics);
         }
 

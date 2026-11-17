@@ -45,6 +45,7 @@ namespace XequeDeTinta.Battle
         public void OnDeathEnd() { if (gameObject.activeInHierarchy) StartCoroutine(Fade()); }
 
         public void PlayAttack() => Trigger("attack");
+        public void PlayTrigger(string name) => Trigger(name);
         public void PlayHit() { if (!Dead) Trigger("hit"); }
 
         public void PlayDeath()
@@ -58,6 +59,9 @@ namespace XequeDeTinta.Battle
         void Trigger(string name)
         {
             if (Animator == null || Animator.runtimeAnimatorController == null) return;
+            bool has = false;
+            foreach (var prm in Animator.parameters) if (prm.name == name) { has = true; break; }
+            if (!has) return;
             Animator.ResetTrigger(name);
             Animator.SetTrigger(name);
         }

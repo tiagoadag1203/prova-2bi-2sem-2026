@@ -47,7 +47,7 @@ MonoBehaviour:
   enrageStrength: 2
   summonedEnemy: {fileID: 11400000, guid: ef7e47ec359e3401982ca08b578fee82, type: 2}
   summonMaxAlive: 2
-  sprite: {fileID: 0}
+  sprite: {fileID: 21300000, guid: 632b2278083b04c54a904179f16b6760, type: 3}
   spriteScale: 1
-  animator: {fileID: 0}
+  animator: {fileID: 9100000, guid: 98ac2736ff6d64ab4a5b3ca9fa223d24, type: 2}
   isBoss: 1

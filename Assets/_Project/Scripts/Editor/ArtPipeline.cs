@@ -121,7 +121,7 @@ namespace XequeDeTinta.EditorTools
                 AnimationUtility.SetAnimationClipSettings(clip, cs);
 
                 // Animation Events: o dano é aplicado no impacto; ao fim da morte o corpo some.
-                if (a.Key == "attack" && sprites.Count > ImpactFrame)
+                if ((a.Key == "attack" || a.Key == "summon") && sprites.Count > ImpactFrame)
                     AnimationUtility.SetAnimationEvents(clip, new[]
                     {
                         new AnimationEvent { time = ImpactFrame / clip.frameRate, functionName = "OnImpact" },

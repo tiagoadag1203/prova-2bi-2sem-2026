@@ -63,6 +63,7 @@ namespace XequeDeTinta.EditorTools
                 c.id = id; c.displayName = name; c.cost = cost; c.element = el; c.target = tg;
                 c.effects = new List<EffectSpec>(fx); c.upgradedEffects = new List<EffectSpec>(up);
                 c.description = desc; c.upgradedDescription = upDesc; c.exhaust = exhaust; c.inRewardPool = pool;
+                c.art = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/Cards/card_" + id + ".png");
                 EditorUtility.SetDirty(c);
                 d[id] = c;
             }
@@ -92,7 +93,7 @@ namespace XequeDeTinta.EditorTools
             var e = LoadOrCreate<EnemyData>(Root + "Enemies/Enemy_" + Pascal(id) + ".asset");
             e.id = id; e.displayName = name; e.element = el; e.maxHp = hp; e.behavior = behavior;
             e.actions = new List<EnemyAction>(actions); e.spriteScale = scale;
-            e.sprite = string.IsNullOrEmpty(spriteName) ? null : AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/Enemies/" + spriteName + ".png");
+            e.sprite = string.IsNullOrEmpty(spriteName) ? null : AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/" + spriteName + ".png");
             e.animator = string.IsNullOrEmpty(controller) ? null : AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>($"Assets/_Project/Animations/{controller}/{controller}.controller");
             return e;
         }
@@ -104,20 +105,19 @@ namespace XequeDeTinta.EditorTools
         {
             var r = new Enemies();
             r.green = Enemy("slime_verde", "Slime Verde", Element.Plant, 18, EnemyBehaviorKind.RandomNoRepeatDefend,
-                "slime_green_idle_0", "slime_green", 1f,
+                "Enemies/slime_green_idle_0", "slime_green", 1f,
                 Act("Investida", IntentType.Attack, damage: 5), Act("Casca", IntentType.Defend, shield: 4));
             r.red = Enemy("slime_vermelho", "Slime Vermelho", Element.Fire, 14, EnemyBehaviorKind.EveryNthSpecial,
-                "slime_red_idle_0", "slime_red", 1f,
+                "Enemies/slime_red_idle_0", "slime_red", 1f,
                 Act("Investida", IntentType.Attack, damage: 7), Act("Chama", IntentType.Debuff, burn: 2));
             r.red.specialEveryN = 3;
             r.blue = Enemy("slime_azul", "Slime Azul", Element.Water, 22, EnemyBehaviorKind.Simple,
-                "slime_blue_idle_0", "slime_blue", 1f,
+                "Enemies/slime_blue_idle_0", "slime_blue", 1f,
                 Act("Respingo", IntentType.Attack, damage: 4, heal: 3));
             r.mini = Enemy("slime_mirim", "Slime Mirim", Element.Plant, 8, EnemyBehaviorKind.Simple,
-                "slime_green_idle_0", "slime_green", 0.6f,
+                "Enemies/slime_green_idle_0", "slime_green", 0.6f,
                 Act("Cutucada", IntentType.Attack, damage: 3));
-            // O sprite e o Animator do Rei Slime chegam no M6 (lote 2).
-            r.king = Enemy("rei_slime", "Rei Slime", Element.Plant, 70, EnemyBehaviorKind.Cycle, null, null, 1f,
+            r.king = Enemy("rei_slime", "Rei Slime", Element.Plant, 70, EnemyBehaviorKind.Cycle, "Bosses/king_slime_idle_0", "king_slime", 1f,
                 Act("Esmagar", IntentType.Attack, damage: 12),
                 Act("Dividir", IntentType.Summon, summon: 2),
                 Act("Coroa Pesada", IntentType.Attack, damage: 6, shield: 8));
@@ -158,6 +158,7 @@ namespace XequeDeTinta.EditorTools
             {
                 var r = LoadOrCreate<RelicData>(Root + "Relics/Relic_" + Pascal(id) + ".asset");
                 r.id = id; r.displayName = name; r.description = desc; r.kind = kind; r.value = value;
+                r.icon = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Project/Art/Relics/relic_" + id + ".png");
                 EditorUtility.SetDirty(r);
                 return r;
             }

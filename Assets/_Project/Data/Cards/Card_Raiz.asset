@@ -35,4 +35,4 @@ MonoBehaviour:
   inRewardPool: 1
   description: Causa 4 de dano e ganha 4 de escudo.
   upgradedDescription: Causa 6 de dano e ganha 6 de escudo.
-  art: {fileID: 0}
+  art: {fileID: 21300000, guid: be2882f5b4cc44daaab85d2b20062089, type: 3}

@@ -159,7 +159,7 @@ namespace XequeDeTinta.Tests
         }
 
         [UnityTest]
-        public IEnumerator DerrotaVoltaAoTitulo()
+        public IEnumerator Derrota_AcabaAPartidaELevaATelaFinal()
         {
             yield return NewRunOnBoard();
             var board = Object.FindAnyObjectByType<BoardController>();
@@ -174,7 +174,7 @@ namespace XequeDeTinta.Tests
             yield return WaitFor(() => battle.ResultShown, 30f);
             Assert.IsFalse(battle.Result.Won);
             battle.Continue();
-            yield return WaitScene("Title");
+            yield return WaitScene("End");
             Assert.IsNull(GameManager.Instance.Run, "a partida acabou");
             Assert.AreEqual(false, GameManager.Instance.LastRunWon);
         }

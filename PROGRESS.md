@@ -3,7 +3,7 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M6 (Chefe e telas), a iniciar. Escopo: versão enxuta, M0 a M8.
+M7 (Áudio e acabamento), a iniciar. Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 - **M0 · Base e arte (lote 1).** Pastas do projeto, câmera Pixel Perfect (640x360, PPU 32), pipeline de importação de arte, lote 1 gerado e importado, clipes e Animators criados, cena `Scenes/M0_Test.unity` com tudo animando. 2 testes de EditMode passam.
@@ -16,6 +16,8 @@ M6 (Chefe e telas), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **M4 · Partida.** `RunState` (vida, deck, relíquias, moedas, casa atual e visitadas, filas de encontros e eventos sorteadas pela semente), `GameManager` persistente (`DontDestroyOnLoad`) e a troca Board ⇄ Battle: pisar numa casa de Batalha ou no Chefe lança a batalha pelo `BattleLauncher`; ao vencer volta ao tabuleiro com o painel de recompensa (10 a 15 moedas e 1 entre 3 cartas, ou pular); só então a casa fica cinza. Vida persiste entre batalhas. Derrota (ou vitória no Chefe, por ora) leva ao título. Painéis `Reward` e `Deck` ("Ver deck", com rolagem) em `UI/Panels.cs`. Cena `Title` (logo em texto, Jogar, Sair, volume, Peão e slimes animados). 11 testes de EditMode (RunState) e 14 de PlayMode (inclui os fluxos da partida). Screenshot em `Docs/screenshots/m4_recompensa.png`.
 
 - **M5 · Casas e relíquias.** Descanso (curar 30% ou melhorar 1 carta com seletor), Loja (3 cartas a 50, 1 relíquia a 100, cura 15 por 35, remover carta por 60; comprado some), Evento (os 3 eventos do GDD, com a escolha e o resultado em texto), Baú (30 moedas e 1 relíquia), tudo em painéis sobre o tabuleiro. As 5 relíquias funcionam: Base de Chumbo, Pincel Afiado, Ampulheta de Bolso e Tinta Seca como ganchos `IBattleHook` na batalha, e Dado Viciado no tabuleiro (botões "Andar" e "Rolar de novo"). Barra de relíquias no HUD com tooltip. Regras em C# puro (`RestLogic`, `ChestLogic`, `Shop`, `EventLogic`); painéis em `UI/TilePanels.cs`. 35 testes de EditMode novos (relíquias, descanso, baú, loja, eventos) e 10 de PlayMode novos clicando nos botões reais. Screenshot em `Docs/screenshots/m5_loja.png`.
+
+- **M6 · Chefe e telas (lote 2 de arte).** Rei Slime 64x64 com idle, attack, summon, hit e death; layout próprio de batalha (Rei à esquerda, 2 Mirins à direita), intenção sobre ele. Ícones de status (escudo, queimadura, fraco, força, atordoado) no lugar do texto, ícones de elemento nas cartas, ilustração em cada uma das 12 cartas, ícones das 5 relíquias, moeda, orbe de energia, fundos de tabuleiro e batalha, logo. Telas: Título (logo, Jogar, Sair, volume), Pausa (Esc: Continuar, Voltar ao título, nas cenas Board e Battle), `End` com Vitória (história curta e créditos) e Derrota (Tentar de novo / Voltar ao título). 16 testes de EditMode de arte e 7 de PlayMode (chefe até a vitória, derrota, pausa, título). Screenshots em `Docs/screenshots/m6_chefe.png` e `m6_titulo.png`.
 
 ## Decisões tomadas
 - **Pixel Perfect Camera** vem embutida no URP 17 (`UnityEngine.Rendering.Universal.PixelPerfectCamera`). Nenhum pacote novo foi instalado; `Packages/` e `ProjectSettings/` não foram alterados.
@@ -49,9 +51,18 @@ M6 (Chefe e telas), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **Regras que o GDD deixou em aberto (provisório):** Dado Viciado = pode rolar de novo 1 vez **por rolagem** (não 1 vez na partida inteira); perder vida em evento nunca mata (sobra 1); relíquia que já falta nenhuma vira 30 moedas; Cura da loja não vende com vida cheia; Remover carta não vende com deck de 1 carta; Base de Chumbo, Pincel Afiado e Ampulheta valem no primeiro turno da batalha (o escudo do herói zera no início de cada turno dele, então 5 de escudo dura até o primeiro turno dos inimigos); evento "Dado Gigante" usa o `RunState.Rng`.
 - **Seletor de cartas reutilizável:** `Panels.CardPicker` serve para melhorar, remover e (sem clique) ver o deck.
 - **Relíquias no HUD** mostram as iniciais (DV, BC...) até o lote 2 trazer os ícones.
+- **Lote 2 não gerou** `panel_9slice`, `button_9slice_*` nem `card_frame`: os painéis, botões e molduras de carta já funcionam desenhados por código (cores da paleta do ASSETS.md) e a moldura é tingida por elemento, como o ASSETS.md pede. Para trocar, `UIFactory.PanelSprite/ButtonSprite` e `CardView.FrameSprite` aceitam sprites 9-slice.
+- **Ilustrações de carta:** o 1º pedido ("card illustration") gerou criaturas em 6 cartas; refiz com "item icon" e guardei as versões antigas em `Art/_Rejected/card_*_v1.png`. Variação rejeitada do Rei Slime em `Art/_Rejected/king_slime_rejected.png`.
+- **Fundos:** o do tabuleiro serve ao título e à tela final. Em janelas que não são 16:9 aparecem faixas roxas nas laterais (a câmera é fixa em 640x360).
+- **UIArt** (`Resources/UIArt.asset`, preenchido por `Xeque > M6 > Preencher UIArt`) reúne ícones e fundos usados por várias telas.
+- **Pausa:** `PauseMenu` congela o tempo (`Time.timeScale = 0`); Esc que cancela o alvo de uma carta não pausa.
+- **Fim de partida:** `GameManager.EndRun` agora carrega `End` (Vitória ou Derrota).
+- **Download de imagens do PixelLab:** conferir sempre o final do PNG (`IEND`); um download longo pode truncar o arquivo (aconteceu com `bg_battle.png`, refeito).
 - Sprites de cartas, relíquias e do Rei Slime ficam nulos até o M6 (lote 2).
 
 ## Para o humano testar jogando
+- **Chefe e telas (M6):** jogar até o Rei Slime: a luta é longa o bastante? o ciclo Esmagar → Dividir → Coroa Pesada é legível? o Rei fica visível contra o fundo verde (o fundo foi escurecido 45%)? Conferir também Pausa (Esc), a tela de Vitória (créditos) e a de Derrota, e se os ícones de status (16 px) têm leitura clara.
+- As 12 ilustrações de carta e os 5 ícones de relíquia foram escolhidos por mim; vale trocar os que não agradarem (guardei os antigos em `_Rejected`).
 - **Casas (M5):** jogar uma partida inteira passando por Loja, Descanso, Evento (os dois sorteados) e Baú. Conferir se os painéis cabem e leem bem, se os preços (50/100/35/60) fazem sentido com as moedas que você junta (10 a 15 por batalha, 30 no baú), se vale a pena a cura de 30% contra melhorar uma carta e se cada relíquia é perceptível na batalha (Base de Chumbo e Pincel Afiado aparecem como "Esc 5" e "Forç 1" na vida do herói).
 - **Partida (M4):** abrir `Scenes/Title.unity` e jogar do início: Jogar, rolar o dado, pisar numa Batalha, vencer, escolher a carta e voltar. Conferir se a troca de cena não parece brusca, se o painel de recompensa é claro, se "Ver deck" mostra o deck certo e se a derrota volta ao título. Ainda não há loja, descanso, evento, baú, relíquias nem a tela de vitória (M5/M6).
 - **Batalha (M3):** abrir `Scenes/Battle.unity`, dar Play e jogar uma batalha de 3 inimigos: ritmo das animações e do dano (o golpe acerta no quadro certo do ataque?), se a intenção sobre o inimigo é clara, se os números flutuantes e "Eficaz!" aparecem a tempo de ler, se o hover/enlargement das cartas atrapalha clicar nos inimigos atrás delas, se a mão cobre demais os inimigos, se 3 de energia e 5 cartas dão um turno interessante.
@@ -73,3 +84,4 @@ M6 (Chefe e telas), a iniciar. Escopo: versão enxuta, M0 a M8.
 | Lote | Gerações | Saldo depois |
 |---|---|---|
 | Lote 1 (M0) | 73 | 1927 de 2000 |
+| Lote 2 (M6) | 52 (inclui 6 ilustrações de carta refeitas) | 1875 de 2000 |

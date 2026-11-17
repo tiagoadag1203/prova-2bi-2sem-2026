@@ -17,4 +17,4 @@ MonoBehaviour:
   description: "Come\xE7a toda batalha com 1 de For\xE7a."
   kind: 3
   value: 1
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 6f6624ddf0881443eb3ba5c38f239f1d, type: 3}

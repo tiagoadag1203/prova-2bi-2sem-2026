@@ -35,4 +35,4 @@ MonoBehaviour:
   inRewardPool: 0
   description: Causa 10 de dano e atordoa.
   upgradedDescription: Causa 14 de dano e atordoa.
-  art: {fileID: 0}
+  art: {fileID: 21300000, guid: 743341ed2f0df419a81bbfdbbe8027b3, type: 3}

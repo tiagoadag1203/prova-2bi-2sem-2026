@@ -17,4 +17,4 @@ MonoBehaviour:
   description: "Come\xE7a toda batalha com 5 de escudo."
   kind: 1
   value: 5
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 84f6055d2b6904f9891a59aeddb891db, type: 3}

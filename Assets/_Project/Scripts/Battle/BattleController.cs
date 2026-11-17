@@ -27,6 +27,7 @@ namespace XequeDeTinta.Battle
         public Sprite heroSprite;
         public RuntimeAnimatorController heroAnimator;
         public Sprite[] intentSprites;   // indexado por IntentType
+        static UIArt Art => UIArt.Get();
 
         [Header("Ritmo")]
         public float speed = 1f;         // os testes aceleram isto
@@ -60,6 +61,9 @@ namespace XequeDeTinta.Battle
             public RectTransform root;
             public Image fill;
             public TextMeshProUGUI hp, status;
+            public RectTransform statusRow;
+            public string statusKey = "";
+            public readonly List<GameObject> statusItems = new List<GameObject>();
             public Image intentIcon;
             public TextMeshProUGUI intentText;
             public GameObject intentRoot;
@@ -77,6 +81,7 @@ namespace XequeDeTinta.Battle
             UIFactory.EnsureEventSystem();
             BuildStage();
             BuildHud();
+            PauseMenu.Attach(canvas.transform, () => GameManager.Instance?.BackToTitle());
             Sys.Begin();
             SetSpeed();
             StartCoroutine(OpeningRoutine());
@@ -118,18 +123,42 @@ namespace XequeDeTinta.Battle
 
         static Vector2 ToCanvas(Vector2 world) => new Vector2((world.x + 10f) * 32f, (world.y + 5.625f) * 32f);
 
-        static Vector2 EnemyFeet(int index) => new Vector2(1.9f + 2.9f * index, -0.9f);
+        bool bossLayout;
+        static readonly float[] BossSlots = { 3.8f, 7.4f, 9.1f };
+
+        Vector2 EnemyFeet(int index) =>
+            bossLayout ? new Vector2(BossSlots[Mathf.Min(index, BossSlots.Length - 1)], -0.9f) : new Vector2(1.9f + 2.9f * index, -0.9f);
+
+        /// <summary>Altura do topo do sprite (para intenções, números e seta), contando a escala.</summary>
+        static float TopOf(ActorView v) => v.transform.position.y + (v.Renderer != null ? v.Renderer.bounds.size.y : 2f);
 
         void BuildStage()
         {
-            var ground = new GameObject("Chao", typeof(SpriteRenderer));
-            ground.transform.SetParent(transform, false);
-            var sr = ground.GetComponent<SpriteRenderer>();
-            sr.sprite = MakeBox(Color.white);
-            sr.color = new Color(0.36f, 0.25f, 0.5f, 1f);
-            sr.sortingOrder = -10;
-            ground.transform.position = new Vector3(0f, -3.3f, 0f);
-            ground.transform.localScale = new Vector3(80f, 4.65f, 1f);   // sprite de 1 px com PPU 1: escala em unidades de mundo
+            if (Art != null && Art.backgroundBattle != null)
+            {
+                var bg = new GameObject("Fundo", typeof(SpriteRenderer));
+                bg.transform.SetParent(transform, false);
+                var sr = bg.GetComponent<SpriteRenderer>();
+                sr.sprite = Art.backgroundBattle; sr.sortingOrder = -20;
+                // Escurece um pouco para os personagens e a interface se destacarem.
+                var dim = new GameObject("Escurecer", typeof(SpriteRenderer));
+                dim.transform.SetParent(transform, false);
+                var ds = dim.GetComponent<SpriteRenderer>();
+                ds.sprite = MakeBox(Color.white); ds.color = new Color(0.1f, 0.05f, 0.18f, 0.45f); ds.sortingOrder = -19;
+                dim.transform.localScale = new Vector3(40f, 24f, 1f);
+            }
+            else
+            {
+                var ground = new GameObject("Chao", typeof(SpriteRenderer));
+                ground.transform.SetParent(transform, false);
+                var sr = ground.GetComponent<SpriteRenderer>();
+                sr.sprite = MakeBox(Color.white);
+                sr.color = new Color(0.36f, 0.25f, 0.5f, 1f);
+                sr.sortingOrder = -10;
+                ground.transform.position = new Vector3(0f, -3.3f, 0f);
+                ground.transform.localScale = new Vector3(80f, 4.65f, 1f);
+            }
+            bossLayout = Sys.Enemies.Count > 0 && Sys.Enemies[0].Data.isBoss;
 
             heroView = CreateActor("Heroi", Sys.Hero, heroSprite, heroAnimator, 3f, HeroFeet, 2);
             AddHud(Sys.Hero, false);
@@ -176,13 +205,14 @@ namespace XequeDeTinta.Battle
             h.hp.rectTransform.anchorMin = new Vector2(0, 1); h.hp.rectTransform.anchorMax = new Vector2(1, 1);
             h.hp.rectTransform.offsetMin = new Vector2(-20, -18); h.hp.rectTransform.offsetMax = new Vector2(20, -8);
 
+            h.statusRow = UIFactory.Rect("LinhaStatus", h.root, new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(-40, -36), new Vector2(40, -20));
             h.status = UIFactory.CreateText("Status", h.root, "", 8, Palette.Cream, TextAlignmentOptions.Top, false);
             h.status.rectTransform.anchorMin = new Vector2(0, 1); h.status.rectTransform.anchorMax = new Vector2(1, 1);
             h.status.rectTransform.offsetMin = new Vector2(-30, -34); h.status.rectTransform.offsetMax = new Vector2(30, -19);
 
             if (enemy)
             {
-                var headWorld = new Vector2(feet.x, feet.y + 2.35f * views[c].baseScale / 2f);
+                var headWorld = new Vector2(feet.x, TopOf(views[c]) + 0.1f);
                 var ir = UIFactory.Anchored("Intencao", canvas.transform, Vector2.zero, new Vector2(60, 32), ToCanvas(headWorld));
                 h.intentRoot = ir.gameObject;
                 var icon = UIFactory.Rect("Icone", ir, new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(0, -16), new Vector2(32, 16));
@@ -207,8 +237,18 @@ namespace XequeDeTinta.Battle
             // Energia
             var orb = UIFactory.Anchored("Energia", canvas.transform, new Vector2(0, 0), new Vector2(40, 40), new Vector2(10, 124));
             var orbImg = orb.gameObject.AddComponent<Image>();
-            orbImg.color = Palette.Gold; orbImg.raycastTarget = false;
-            energyText = UIFactory.CreateText("Valor", orb, "3/3", 10, Palette.Purple);
+            orbImg.raycastTarget = false;
+            if (Art != null && Art.energyOrb != null) { orbImg.sprite = Art.energyOrb; orbImg.preserveAspect = true; }
+            else orbImg.color = Palette.Gold;
+            if (Art != null && Art.energyOrb != null)
+            {
+                // Com a arte do orbe, o número vai ao lado, em creme, para não sumir no miolo escuro.
+                energyText = UIFactory.CreateText("Valor", canvas.transform, "3/3", 12, Palette.Gold, TextAlignmentOptions.Left, false);
+                var er = energyText.rectTransform;
+                er.anchorMin = er.anchorMax = Vector2.zero; er.pivot = new Vector2(0, 0.5f);
+                er.sizeDelta = new Vector2(60, 16); er.anchoredPosition = new Vector2(52, 144);
+            }
+            else energyText = UIFactory.CreateText("Valor", orb, "3/3", 10, Palette.Purple);
 
             drawText = UIFactory.CreateText("Compra", canvas.transform, "", 8, Palette.Cream, TextAlignmentOptions.Left, false);
             var dr = drawText.rectTransform; dr.anchorMin = dr.anchorMax = Vector2.zero; dr.pivot = new Vector2(0, 0);
@@ -243,6 +283,42 @@ namespace XequeDeTinta.Battle
             return sb.ToString();
         }
 
+        /// <summary>Linha de status com ícone + número; sem os sprites, cai para o texto colorido.</summary>
+        void RefreshStatus(Combatant c, ActorHud h)
+        {
+            var statusSprites = Art != null ? Art.statusIcons : null;
+            bool icons = statusSprites != null && statusSprites.Length >= 5 && statusSprites[0] != null;
+            if (!icons) { h.status.text = StatusLine(c); return; }
+            h.status.text = "";
+            string key = $"{c.Shield}|{c.Burn}|{c.Weak}|{c.Strength}|{c.Stunned}";
+            if (key == h.statusKey) return;
+            h.statusKey = key;
+            foreach (var g in h.statusItems) Destroy(g);
+            h.statusItems.Clear();
+
+            var active = new List<(int icon, int value)>();
+            if (c.Shield > 0) active.Add((0, c.Shield));
+            if (c.Burn > 0) active.Add((1, c.Burn));
+            if (c.Weak > 0) active.Add((2, c.Weak));
+            if (c.Strength > 0) active.Add((3, c.Strength));
+            if (c.Stunned) active.Add((4, 0));
+
+            const float step = 30f;
+            float start = -(active.Count - 1) * step / 2f;
+            for (int i = 0; i < active.Count; i++)
+            {
+                var item = UIFactory.Anchored("Status" + i, h.statusRow, new Vector2(0.5f, 0.5f), new Vector2(28, 16), new Vector2(start + i * step, 0));
+                var img = UIFactory.Rect("Icone", item, new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(0, -8), new Vector2(16, 8)).gameObject.AddComponent<Image>();
+                img.sprite = statusSprites[active[i].icon]; img.raycastTarget = false;
+                if (active[i].value > 0)
+                {
+                    var t = UIFactory.CreateText("N", item, active[i].value.ToString(), 8, Palette.Cream, TextAlignmentOptions.Left, false);
+                    t.rectTransform.offsetMin = new Vector2(17, 0);
+                }
+                h.statusItems.Add(item.gameObject);
+            }
+        }
+
         void RefreshHud()
         {
             foreach (var kv in huds)
@@ -252,7 +328,7 @@ namespace XequeDeTinta.Battle
                 h.root.gameObject.SetActive(show && (views[c].Renderer == null || views[c].Renderer.enabled));
                 h.fill.fillAmount = c.MaxHp > 0 ? Mathf.Clamp01(c.Hp / (float)c.MaxHp) : 0f;
                 h.hp.text = c.Hp + "/" + c.MaxHp;
-                h.status.text = StatusLine(c);
+                RefreshStatus(c, h);
                 if (h.intentRoot != null)
                 {
                     var e = (Enemy)c;
@@ -326,7 +402,7 @@ namespace XequeDeTinta.Battle
                 ShowTargetArrow();
                 bool cancel = (kb != null && kb.escapeKey.wasPressedThisFrame) ||
                               (mouse != null && mouse.rightButton.wasPressedThisFrame);
-                if (cancel) { CancelTargeting(); return; }
+                if (cancel) { PauseMenu.Suppress(); CancelTargeting(); return; }
                 if (mouse != null && mouse.leftButton.wasPressedThisFrame)
                 {
                     var e = EnemyUnderMouse();
@@ -366,7 +442,7 @@ namespace XequeDeTinta.Battle
                 targetArrow = go.transform;
             }
             var pos = views[e].transform.position;
-            targetArrow.position = new Vector3(pos.x, pos.y + 2.6f * views[e].baseScale / 2f + Mathf.Sin(Time.time * 8f) * 0.06f, 0f);
+            targetArrow.position = new Vector3(pos.x, TopOf(views[e]) + 0.6f + Mathf.Sin(Time.time * 8f) * 0.06f, 0f);
             targetArrow.gameObject.SetActive(true);
         }
 
@@ -473,7 +549,8 @@ namespace XequeDeTinta.Battle
                 {
                     var view = views[play.Enemy];
                     var a = play.Action;
-                    if (a.damage > 0 || a.intent == IntentType.Debuff || a.intent == IntentType.Summon)
+                    if (a.intent == IntentType.Summon) yield return WaitImpact(view, "summon");
+                    else if (a.damage > 0 || a.intent == IntentType.Debuff)
                         yield return WaitImpact(view);
                     else yield return Wait(0.3f);
                 }
@@ -493,12 +570,12 @@ namespace XequeDeTinta.Battle
         }
 
         /// <summary>Toca o ataque e espera o Animation Event de impacto (com tempo-limite de segurança).</summary>
-        IEnumerator WaitImpact(ActorView v)
+        IEnumerator WaitImpact(ActorView v, string trigger = "attack")
         {
             bool hit = false;
             Action h = () => hit = true;
             v.Impact += h;
-            v.PlayAttack();
+            v.PlayTrigger(trigger);
             float t = 0f, limit = Dur(1.2f);
             while (!hit && t < limit) { t += Time.deltaTime; yield return null; }
             v.Impact -= h;
@@ -546,7 +623,7 @@ namespace XequeDeTinta.Battle
         void Float(Combatant c, string text, Color color, float extraY = 0f)
         {
             var v = views[c];
-            var head = (Vector2)v.transform.position + new Vector2(0f, 1.6f * v.baseScale / 2f + 0.4f);
+            var head = new Vector2(v.transform.position.x, Mathf.Min(TopOf(v), v.transform.position.y + 3f) - 0.3f);
             var t = UIFactory.CreateText("Num", floaters, text, 12, color, TextAlignmentOptions.Center, false);
             var rt = t.rectTransform;
             rt.anchorMin = rt.anchorMax = Vector2.zero; rt.pivot = new Vector2(0.5f, 0.5f);

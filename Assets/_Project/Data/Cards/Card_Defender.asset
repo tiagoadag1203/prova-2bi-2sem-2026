@@ -29,4 +29,4 @@ MonoBehaviour:
   inRewardPool: 0
   description: Ganha 5 de escudo.
   upgradedDescription: Ganha 8 de escudo.
-  art: {fileID: 0}
+  art: {fileID: 21300000, guid: 4ae00a74b921b4898b64dd3889fcf3c1, type: 3}

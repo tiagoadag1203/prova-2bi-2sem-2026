@@ -17,4 +17,4 @@ MonoBehaviour:
   description: No primeiro turno de cada batalha, +1 de energia.
   kind: 4
   value: 1
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 1ff12a5b8bdfe4a0c854e258bbedfd59, type: 3}
