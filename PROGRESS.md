@@ -119,4 +119,7 @@ Todos os marcos (M0 a M8) concluídos. Resta só a verificação humana jogando 
 |---|---|---|
 | Lote 1 (M0) | 73 | 1927 de 2000 |
 | Lote 2 (M6) | 52 (inclui 6 ilustrações de carta refeitas) | 1875 de 2000 |
+| Peão de tinta com rosto (correção: estava sem rosto, parecia de costas) | 24 (1 objeto de 10 + 4 animações) | ver `get_balance` |
 | Tema "O Tabuleiro Manchado" | 83 (2 fundos, Rei Slime, 3 slimes + 1 refeito, peão de tinta, animações) | 1792 de 2000 |
+
+- **Correção do Slime Mirim (peão de tinta):** o sprite saía sem rosto e parecia de costas para o Peão. Refeito no PixelLab com olhos e boca visíveis (versão antiga em `Art/_Rejected/ink_pawn_sem_rosto/`), animações idle/attack/hit/death regeradas, dados recriados. Testes: arte e 37 de PlayMode passando; Console limpo; `m10_chefe.png` atualizado (Rei Slime + 2 peões).

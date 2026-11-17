@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9eb9d1930daa843ecb8b5487c6deac54
+guid: 7e392379e6c4d4c3bafadecf441ea87c
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -116,10 +116,10 @@ TextureImporter:
       name: ink_pawn_attack_3_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 1
-        width: 25
-        height: 29
+        x: 4
+        y: 0
+        width: 24
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

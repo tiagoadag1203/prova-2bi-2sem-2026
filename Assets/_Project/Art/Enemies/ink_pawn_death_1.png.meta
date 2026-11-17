@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1774a312a3d424d97be2a118e9f98a6e
+guid: 629d45a882bc94abca078986c5763c8e
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -116,10 +116,10 @@ TextureImporter:
       name: ink_pawn_death_1_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 1
-        width: 24
-        height: 29
+        x: 3
+        y: 0
+        width: 26
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
