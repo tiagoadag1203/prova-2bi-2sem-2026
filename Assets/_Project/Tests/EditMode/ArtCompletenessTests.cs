@@ -61,6 +61,7 @@ namespace XequeDeTinta.Tests
         [TestCase("slime_red")]
         [TestCase("slime_blue")]
         [TestCase("king_slime")]
+        [TestCase("ink_pawn")]
         public void ClipeDeAtaqueDisparaOnImpactNoQuadro4(string who)
         {
             var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>($"Assets/_Project/Animations/{who}/{who}_attack.anim");

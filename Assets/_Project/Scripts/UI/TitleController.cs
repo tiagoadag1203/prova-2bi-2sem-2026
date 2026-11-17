@@ -61,6 +61,11 @@ namespace XequeDeTinta.UI
             {
                 var img = UIFactory.Anchored("Logo", canvas.transform, new Vector2(0.5f, 1), new Vector2(256, 96), new Vector2(0, -20));
                 var im = img.gameObject.AddComponent<Image>(); im.sprite = logo; im.preserveAspect = true;
+                var line = UIFactory.CreateText("Premissa", canvas.transform, "A tinta mágica afogou as peças. Só o peão pode salvar o tabuleiro.", 8, Palette.Cream);
+                SetTop(line.rectTransform, 122, 12);
+                var strip = UIFactory.Rect("FaixaPremissa", line.transform.parent, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -136), new Vector2(0, -119));
+                var sImg = strip.gameObject.AddComponent<Image>(); sImg.color = new Color(0.08f, 0.04f, 0.15f, 0.7f); sImg.raycastTarget = false;
+                strip.SetSiblingIndex(line.transform.GetSiblingIndex());
             }
             else
             {

@@ -30,6 +30,8 @@ namespace XequeDeTinta.Core
         /// <summary>Casa cuja resolução está em andamento (batalha em outra cena); -1 se nenhuma.</summary>
         public int PendingTileId = -1;
         public PendingReward Reward;
+        /// <summary>A história de abertura ainda não foi mostrada nesta partida (só partidas iniciadas pelo título).</summary>
+        public bool IntroPending;
 
         readonly Queue<EncounterData> battleQueue = new Queue<EncounterData>();
         readonly Queue<EventData> eventQueue = new Queue<EventData>();

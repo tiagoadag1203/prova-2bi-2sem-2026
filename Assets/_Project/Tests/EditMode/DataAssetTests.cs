@@ -150,7 +150,7 @@ namespace XequeDeTinta.Tests
 
             var mirim = Enemy("slime_mirim");
             Assert.AreEqual(3, mirim.actions[0].damage);
-            Assert.AreEqual(0.6f, mirim.spriteScale);
+            Assert.AreEqual(0.75f, mirim.spriteScale);   // peão de tinta, arte própria
         }
 
         [Test]

@@ -39,7 +39,7 @@ namespace XequeDeTinta.Battle
         public event Action<BattleResult> Finished;
 
         // Cena
-        static readonly Vector2 HeroFeet = new Vector2(-5.6f, -0.7f);
+        static readonly Vector2 HeroFeet = new Vector2(-4.7f, -0.7f);
         const float HandBand = 100f;   // faixa inferior (px do quadro 640x360) reservada para a mão
         ActorView heroView;
         readonly Dictionary<Combatant, ActorView> views = new Dictionary<Combatant, ActorView>();
@@ -161,7 +161,7 @@ namespace XequeDeTinta.Battle
                 var dim = new GameObject("Escurecer", typeof(SpriteRenderer));
                 dim.transform.SetParent(transform, false);
                 var ds = dim.GetComponent<SpriteRenderer>();
-                ds.sprite = MakeBox(Color.white); ds.color = new Color(0.1f, 0.05f, 0.18f, 0.45f); ds.sortingOrder = -19;
+                ds.sprite = MakeBox(Color.white); ds.color = new Color(0.08f, 0.04f, 0.15f, 0.58f); ds.sortingOrder = -19;
                 dim.transform.localScale = new Vector3(40f, 24f, 1f);
             }
             else

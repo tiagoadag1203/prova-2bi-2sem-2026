@@ -1,6 +1,6 @@
 # Xeque de Tinta
 
-Roguelite de tabuleiro com batalhas de cartas em turnos, em pixel art. Um peão de madeira ganha vida e atravessa a Floresta de Feltro casa por casa, enfrentando slimes de tinta mágica até derrotar o Rei Slime.
+Roguelite de tabuleiro com batalhas de cartas em turnos, em pixel art. Tinta mágica foi derramada sobre um tabuleiro de xadrez gigante e "afogou" as peças, que viraram slimes. O peão, a peça mais fraca, é o único que sobrou: ele atravessa O Tabuleiro Manchado casa por casa até derrotar o Rei Slime, o rei do xadrez tomado pela tinta.
 
 - **Engine:** Unity 6 (6000.4), 2D URP
 - **Plataformas:** Windows e macOS

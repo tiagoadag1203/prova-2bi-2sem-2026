@@ -96,6 +96,18 @@ Todos os marcos (M0 a M8) concluídos. Resta só a verificação humana jogando 
 - Testes: 32 de PlayMode e os de EditMode passam; Console sem erros nem warnings.
 - Observação: em janelas pequenas ou largas o zoom inteiro pode ser 1x (tudo pequeno); isso é o comportamento do pixel perfect. Em 1280x720 o zoom é 2x e em 1920x1080 é 3x.
 
+## Mudança de tema: "O Tabuleiro Manchado" (tabuleiro de xadrez)
+- **Tema:** o jogo acontece num tabuleiro de xadrez gigante; tinta mágica "afogou" as peças, que viraram slimes; o Rei Slime é o rei do xadrez tomado pela tinta; o peão é o único que sobrou. A floresta saiu. Regras, números e o mapa de casas **não mudaram** (testes de dados e de balanceamento seguem verdes, vitória do robô ~77%).
+- **Arte regerada no PixelLab (83 gerações; saldo 1875 → 1792):** `bg_board` (tabuleiro de madeira com poças roxas e verdes, peças, vela) e `bg_battle` (nível do tabuleiro, peças gigantes como ruínas, céu roxo, vela); Rei Slime 64x64 com a coroa de rei de xadrez (com cruz) afundada na gosma, mesmas 5 animações; Slime Verde com torre, Vermelho com cavalo, Azul com bispo, mesmas animações; Slime Mirim virou o **peão de tinta** (`ink_pawn`, arte própria, escala 0,75 em vez de 0,6).
+- **Decisão de leitura (regra "priorize a leitura"):** os candidatos do Rei Slime com pedaços de madeira por dentro perdiam o rosto, então escolhi a versão com coroa de xadrez e rosto nítido; a madeira da peça do rei ficou só como alternativa em `Art/_Rejected/king_slime_xadrez_alt.png`. No Slime Verde refiz o pedido (10 gerações extras) porque os candidatos iniciais não traziam folha **e** torre; o escolhido mantém a folha no topo e a torre cravada ao lado. Nos três slimes a cor e o detalhe do elemento (folha, chama, gota) vêm primeiro e a peça é detalhe.
+- **Fundos escurecidos** (battle 58%, board 48%) e o herói afastado da vela para o Peão não se confundir com ela.
+- **Textos:** fase "O Tabuleiro Manchado" (GDD seção 1, README, ASSETS, caixa de história); título com a linha "A tinta mágica afogou as peças. Só o peão pode salvar o tabuleiro." sobre uma faixa escura; **caixa de história** (3 linhas) na primeira abertura do tabuleiro de cada partida iniciada pelo título ou por "Tentar de novo" (`RunState.IntroPending`), com o dado bloqueado até "Começar". Partidas criadas por `NewRun()` (testes) não mostram a caixa. GDD: seção 1 e tabela de inimigos (aparência) atualizadas; ASSETS.md com os prompts novos.
+- **Versões antigas** em `Art/_Rejected/floresta/` (fundos, slimes e Rei Slime) e alternativas rejeitadas desta rodada em `Art/_Rejected/*_alt.png`.
+- **Testes:** 37 de PlayMode (novos: `StoryFlowTests`), EditMode de dados, arte e balanceamento verdes; dois testes de derrota deixaram de depender de sorte (o Slime Verde pode escolher escudo no 1º turno). Console sem erros nem warnings.
+- **Screenshots:** `Docs/screenshots/m10_titulo.png`, `m10_historia.png`, `m10_tabuleiro.png`, `m10_batalha.png` (3 slimes) e `m10_chefe.png`.
+- **Para o humano avaliar:** as peças nos slimes de 32 px (torre, cavalo, bispo) como detalhe: dá para ler? O fundo da batalha é movimentado; os personagens se destacam? O nome do evento "Fonte de Feltro" ficou (é só um nome de evento).
+- As builds em `Build/` estão **desatualizadas** (são do tema da floresta); refazer antes de entregar.
+
 ## Pendências
 - Ícones de intenção (16x16) e ícones das casas ainda não foram avaliados em tamanho real dentro do jogo.
 - Quadro de impacto exato das animações (Animation Event) a ligar no M3.
@@ -107,3 +119,4 @@ Todos os marcos (M0 a M8) concluídos. Resta só a verificação humana jogando 
 |---|---|---|
 | Lote 1 (M0) | 73 | 1927 de 2000 |
 | Lote 2 (M6) | 52 (inclui 6 ilustrações de carta refeitas) | 1875 de 2000 |
+| Tema "O Tabuleiro Manchado" | 83 (2 fundos, Rei Slime, 3 slimes + 1 refeito, peão de tinta, animações) | 1792 de 2000 |

@@ -12,12 +12,14 @@ Todos os números são ponto de partida e ficam em ScriptableObjects, para o bal
 |---|---|
 | Gênero | Roguelite de tabuleiro + batalha em turnos com cartas |
 | Plataforma | PC (Windows e Mac), Unity 6 2D URP |
-| Visual | Pixel art 32x32 (chefe 64x64), câmera fixa, cores vivas sobre fundo roxo escuro |
+| Visual | Pixel art 32x32 (chefe 64x64), câmera fixa, cores vivas sobre fundo roxo escuro. Cenário: um tabuleiro de xadrez gigante manchado de tinta mágica roxa e verde, de madeira, à luz de uma vela |
 | Duração da partida | 10 a 15 minutos (1 fase) |
 | Referências | Slay the Spire (cartas, intenções), Mario Party (dado e casas) |
 | Controles | Mouse. Atalhos: Espaço rola o dado ou encerra o turno, Esc pausa |
 
-**História:** as peças de um jogo de tabuleiro ganharam vida. Manchas de tinta mágica derramadas sobre o tabuleiro viraram slimes, comandados pelo Rei Slime. O peão de madeira atravessa a Floresta de Feltro casa por casa para derrotar o Rei Slime e limpar o tabuleiro.
+**Fase:** "O Tabuleiro Manchado".
+
+**História:** o jogo acontece sobre um tabuleiro de xadrez gigante. Tinta mágica foi derramada sobre ele e "afogou" as peças, que viraram slimes. O Rei Slime é o próprio rei do xadrez tomado pela tinta. O peão, a peça mais fraca, é a única que sobrou para limpar o tabuleiro e percorre as casas até derrotar o Rei Slime. Na primeira vez que o tabuleiro abre, uma caixa curta conta isso antes de liberar o dado; o título mostra a premissa numa linha: "A tinta mágica afogou as peças. Só o peão pode salvar o tabuleiro."
 
 **Final:** ao vencer o Rei Slime, a tinta seca, o peão comemora e aparece a tela de vitória com créditos curtos.
 
@@ -96,11 +98,11 @@ As 9 últimas formam o pool de recompensa (todas com a mesma chance).
 
 | Inimigo | Elem. | Vida | Comportamento |
 |---|---|---|---|
-| Slime Verde | Planta | 18 | Aleatório: ataca 5 ou ganha 4 de escudo (nunca escudo duas vezes seguidas) |
-| Slime Vermelho | Fogo | 14 | Ataca 7. A cada 3 turnos, em vez de atacar, aplica Queimadura 2 |
-| Slime Azul | Água | 22 | Ataca 4 e cura 3 do aliado mais ferido (ou a si mesmo) |
-| **Rei Slime** (chefe) | Planta | 70 | Ciclo: Esmagar (12 de dano) → Dividir (invoca 2 Slimes Mirins, máx. 2 vivos) → Coroa Pesada (8 de escudo + 6 de dano). Abaixo de 50% de vida, ganha 2 de Força uma vez |
-| Slime Mirim | Planta | 8 | Ataca 3. Usa o sprite do Slime Verde em escala 0,6 |
+| Slime Verde (carrega uma torre afundada) | Planta | 18 | Aleatório: ataca 5 ou ganha 4 de escudo (nunca escudo duas vezes seguidas) |
+| Slime Vermelho (carrega um cavalo) | Fogo | 14 | Ataca 7. A cada 3 turnos, em vez de atacar, aplica Queimadura 2 |
+| Slime Azul (carrega um bispo) | Água | 22 | Ataca 4 e cura 3 do aliado mais ferido (ou a si mesmo) |
+| **Rei Slime** (chefe: o rei do xadrez tomado pela tinta, com a coroa afundada na gosma) | Planta | 70 | Ciclo: Esmagar (12 de dano) → Dividir (invoca 2 Slimes Mirins, máx. 2 vivos) → Coroa Pesada (8 de escudo + 6 de dano). Abaixo de 50% de vida, ganha 2 de Força uma vez |
+| Slime Mirim ("peão de tinta": slime verde em forma de peão derretido) | Planta | 8 | Ataca 3. Arte própria (`ink_pawn`), escala 0,75 |
 
 **Grupos das 5 batalhas** (sorteados sem repetir): [Verde], [Vermelho], [Verde, Azul], [Vermelho, Verde], [Azul, Vermelho, Verde].
 

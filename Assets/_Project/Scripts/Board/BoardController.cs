@@ -92,6 +92,7 @@ namespace XequeDeTinta.Board
             SetMessage("Role o dado para andar!");
             foreach (var id in Progress.Visited) tileRenderers[id].color = VisitedTint;
             if (Run.PendingTileId >= 0) StartCoroutine(ResumeAfterBattle());
+            else if (Run.IntroPending) StartCoroutine(IntroRoutine());
         }
 
         // ---------- Construção ----------
@@ -108,7 +109,7 @@ namespace XequeDeTinta.Board
             var dim = new GameObject("Escurecer", typeof(SpriteRenderer));
             dim.transform.SetParent(transform, false);
             var ds = dim.GetComponent<SpriteRenderer>();
-            ds.sprite = MakeDot(); ds.color = new Color(0.1f, 0.05f, 0.18f, 0.4f); ds.sortingOrder = -19;
+            ds.sprite = MakeDot(); ds.color = new Color(0.08f, 0.04f, 0.15f, 0.48f); ds.sortingOrder = -19;
             dim.transform.localScale = new Vector3(40f * 32f, 24f * 32f, 1f);
         }
 
@@ -513,6 +514,39 @@ namespace XequeDeTinta.Board
         }
 
         Action<int> pickReward;
+
+        /// <summary>Nome da fase.</summary>
+        public const string StageName = "O Tabuleiro Manchado";
+
+        /// <summary>A caixa de história aparece antes de liberar o dado, na primeira vez que o tabuleiro abre.</summary>
+        public bool IntroVisible { get; private set; }
+
+        IEnumerator IntroRoutine()
+        {
+            SetState(BoardState.Resolving);
+            IntroVisible = true;
+            var overlay = Panels.Overlay(hudCanvas.transform, "PainelHistoria");
+            var panel = UIFactory.CreatePanel("Painel", overlay, new Vector2(0.5f, 0.5f), new Vector2(380, 170), Vector2.zero);
+            var title = UIFactory.CreateText("Titulo", panel, StageName, 12, Palette.Gold);
+            title.rectTransform.anchorMin = new Vector2(0, 1); title.rectTransform.anchorMax = new Vector2(1, 1);
+            title.rectTransform.pivot = new Vector2(0.5f, 1); title.rectTransform.sizeDelta = new Vector2(0, 16);
+            title.rectTransform.anchoredPosition = new Vector2(0, -10);
+            var body = UIFactory.CreateText("Historia", panel,
+                "A tinta mágica foi derramada sobre o tabuleiro e afogou as peças, que viraram slimes.\n" +
+                "O Rei Slime, antigo rei do xadrez, comanda a mancha.\n" +
+                "O peão, a peça mais fraca, é o único que sobrou para limpar o tabuleiro.",
+                8, Palette.Cream);
+            body.lineSpacing = 12f;
+            body.rectTransform.offsetMin = new Vector2(14, 34); body.rectTransform.offsetMax = new Vector2(-14, -32);
+            bool closed = false;
+            UIFactory.CreateButton("Comecar", panel, "Começar", new Vector2(0.5f, 0), new Vector2(110, 20), new Vector2(0, 8), () => closed = true);
+            while (!closed) yield return null;
+            Destroy(overlay.gameObject);
+            IntroVisible = false;
+            Run.IntroPending = false;
+            SetState(BoardState.Idle);
+            SetMessage("Role o dado para andar!");
+        }
 
         /// <summary>Aplica a recompensa: moedas e a carta escolhida (índice) ou nenhuma (-1).</summary>
         public void ClaimReward(int index)

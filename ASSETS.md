@@ -7,7 +7,7 @@ Toda a arte vem do PixelLab (MCP `pixellab`). Os sprites antigos em `Assets/_Pro
 - Pixel art, contorno escuro de 1 px, sombreamento simples (2 a 3 tons), cores vivas.
 - **Vista lateral:** herói virado para a **direita**, inimigos para a **esquerda**.
 - Tamanhos: personagens 32x32, chefe 64x64, ícones 16x16. Fundo transparente, PNG.
-- Tema: peças de tabuleiro de madeira, feltro e papel; monstros de tinta viva.
+- Tema: um tabuleiro de xadrez gigante de madeira, manchado de tinta mágica roxa e verde; as peças "afogadas" na tinta viraram slimes (O Tabuleiro Manchado).
 - Interface: fundo roxo escuro (#2A1B3D), dourado (#F2C14E), creme (#F4E9D8).
 - Cada slime leva um detalhe do elemento (folha, chama, gota), não só a cor.
 
@@ -36,9 +36,9 @@ Toda a arte vem do PixelLab (MCP `pixellab`). Os sprites antigos em `Assets/_Pro
 | Arquivo | Tamanho | Descrição |
 |---|---|---|
 | Characters/Hero/pawn_*.png | 32 | wooden chess pawn hero, light beech wood, red scarf, small iron sword, determined dot eyes |
-| Enemies/slime_green_*.png | 32 | green ink slime, tall dome, small leaf sprout on top, visible eyes |
-| Enemies/slime_red_*.png | 32 | red ink slime, small flame tuft on top, angry eyes |
-| Enemies/slime_blue_*.png | 32 | blue ink slime, water drop shape on top, calm eyes |
+| Enemies/slime_green_*.png | 32 | `cute green ink slime blob with a small leaf sprout on top of its head and visible eyes, and a small grey stone chess rook castle tower piece stuck into its right side` |
+| Enemies/slime_red_*.png | 32 | `red ink slime blob, small flame tuft on top, angry eyes, a small wooden chess knight horse head piece sunk in its body` |
+| Enemies/slime_blue_*.png | 32 | `blue ink slime blob, water drop on top, calm eyes, a small wooden chess bishop piece with its pointed mitre sunk in its body` |
 | Board/dice_face_1..6.png, dice_roll_*.png | 32 | cream wooden die with purple pips, 6 faces + 4 frames rolling |
 | Board/tile_[start, battle, shop, rest, event, chest, boss].png | 32 | rounded square tile, colored border, icon: star, crossed swords, coin, heart, question mark, chest, crown |
 | Board/tile_*_visited.png | 32 | a mesma casa em cinza (pode ser feita por código, dessaturando) |
@@ -48,7 +48,8 @@ Toda a arte vem do PixelLab (MCP `pixellab`). Os sprites antigos em `Assets/_Pro
 
 | Arquivo | Tamanho | Descrição |
 |---|---|---|
-| Bosses/king_slime_*.png | 64 | huge green ink slime with golden cardboard crown and leaf cape |
+| Bosses/king_slime_*.png | 64 | `huge green ink slime king monster, wide dome blob body, golden chess king crown with a small cross on top half sunk in the slime, pieces of the wooden chess king piece visible inside the translucent green goo, two angry eyes, facing left` |
+| Enemies/ink_pawn_*.png (Slime Mirim) | 32 | `small green ink slime shaped like a melting chess pawn piece, round head on a wide melting base, dripping green goo, two small eyes, facing left` |
 | UI/Status/status_[shield, burn, weak, strength, stun].png | 16 | ícones simples |
 | UI/Elements/element_[fire, plant, water, neutral].png | 16 | chama, folha, gota, círculo |
 | UI/Cards/card_frame.png | 48x64 | moldura de carta de papel creme, faixa para nome e custo |
@@ -56,7 +57,8 @@ Toda a arte vem do PixelLab (MCP `pixellab`). Os sprites antigos em `Assets/_Pro
 | Relics/relic_[dado_viciado, base_de_chumbo, tinta_seca, pincel_afiado, ampulheta_de_bolso].png | 16 | ícone de cada relíquia |
 | UI/energy_orb.png, UI/coin.png | 16 a 24 | orbe de tinta dourada; moeda dourada |
 | UI/panel_9slice.png, UI/button_9slice_[normal, hover, pressed].png | 9-slice | papel creme com borda de madeira |
-| Backgrounds/bg_board.png, bg_battle.png | 640x360 | floresta de feltro verde, árvores de papel recortado, luz suave (o do tabuleiro serve de fundo do título) |
+| Backgrounds/bg_board.png | 640x360 | `giant wooden chess board seen from above in slight perspective, light and dark squares, big puddles and drips of purple and green magic ink covering part of the squares, fallen chess pieces (rook, bishop, knight) half sunk in the ink, wooden frame border, a wooden table and warm candle light in the background, dark purple tones` (serve de fundo do título e da tela final) |
+| Backgrounds/bg_battle.png | 640x360 | `side view at chessboard level, floor of chess squares in perspective, puddles of purple ink, giant fallen chess pieces in the background like ruins, dark purple sky outside the table, warm candle light, empty center` |
 | UI/logo.png | 256x96 | "Xeque de Tinta" em letras de madeira com tinta escorrendo |
 
 ## Áudio (M7)

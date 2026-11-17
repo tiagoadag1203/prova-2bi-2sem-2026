@@ -117,7 +117,7 @@ namespace XequeDeTinta.EditorTools
                 "Enemies/slime_blue_idle_0", "slime_blue", 1f,
                 Act("Respingo", IntentType.Attack, damage: 4, heal: 3));
             r.mini = Enemy("slime_mirim", "Slime Mirim", Element.Plant, 8, EnemyBehaviorKind.Simple,
-                "Enemies/slime_green_idle_0", "slime_green", 0.6f,
+                "Enemies/ink_pawn_idle_0", "ink_pawn", 0.75f,
                 Act("Cutucada", IntentType.Attack, damage: 3));
             r.king = Enemy("rei_slime", "Rei Slime", Element.Plant, 70, EnemyBehaviorKind.Cycle, "Bosses/king_slime_idle_0", "king_slime", 1f,
                 Act("Esmagar", IntentType.Attack, damage: 12),

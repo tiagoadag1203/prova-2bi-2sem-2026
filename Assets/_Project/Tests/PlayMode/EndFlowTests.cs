@@ -104,7 +104,11 @@ namespace XequeDeTinta.Tests
             yield return WaitScene("Battle");
             var battle = Object.FindAnyObjectByType<BattleController>();
             yield return WaitFor(() => !battle.Busy);
-            battle.EndTurn();
+            for (int i = 0; i < 8 && !battle.ResultShown; i++)
+            {
+                battle.EndTurn();
+                yield return WaitFor(() => !battle.Busy || battle.ResultShown, 30f);
+            }
             yield return WaitFor(() => battle.ResultShown, 30f);
             battle.Continue();
 
@@ -199,6 +203,9 @@ namespace XequeDeTinta.Tests
             Assert.AreEqual("board", AudioManager.CurrentTrackName);
 
             var board = Object.FindAnyObjectByType<BoardController>();
+            yield return WaitFor(() => board.IntroVisible);
+            Assert.IsTrue(Click("Começar"));                     // a história precisa ser fechada antes do dado
+            yield return null;
             board.speed = 40f;
             board.Rng = new ScriptedRng(1);
             board.RollDice();                                    // casa 1 = batalha

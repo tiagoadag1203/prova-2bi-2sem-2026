@@ -170,7 +170,11 @@ namespace XequeDeTinta.Tests
             yield return WaitScene("Battle");
             var battle = Object.FindAnyObjectByType<BattleController>();
             yield return WaitFor(() => !battle.Busy);
-            battle.EndTurn();                                        // com 1 de vida, qualquer ataque derrota
+            for (int i = 0; i < 8 && !battle.ResultShown; i++)       // com 1 de vida, o 1º ataque derrota (o Verde pode escolher escudo antes)
+            {
+                battle.EndTurn();
+                yield return WaitFor(() => !battle.Busy || battle.ResultShown, 30f);
+            }
             yield return WaitFor(() => battle.ResultShown, 30f);
             Assert.IsFalse(battle.Result.Won);
             battle.Continue();

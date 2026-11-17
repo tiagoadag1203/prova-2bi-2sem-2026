@@ -68,7 +68,7 @@ namespace XequeDeTinta.Core
 
         public void StartRun()
         {
-            NewRun();
+            NewRun().IntroPending = true;
             Load("Board");
         }
 
