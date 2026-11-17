@@ -8,14 +8,18 @@ Roguelite de tabuleiro com batalhas de cartas em turnos, feito em Unity 2D. O de
 - O Editor fica aberto durante as sessões e é controlado pelo MCP da Unity (`unity-editor-mcp`). A arte nova vem do MCP do PixelLab (`pixellab`).
 - Pacotes esperados: 2D (Sprite, Tilemap, Animation, Pixel Perfect), Input System, TextMeshPro, Test Framework. Peça autorização antes de instalar qualquer outro pacote.
 
-## Como trabalhar
+## Como trabalhar (modo autônomo)
 
-1. Trabalhe em **um marco por vez**, na ordem da seção 15 do `GDD.md`. Não adiante funcionalidades de marcos futuros.
-2. Antes de editar, faça um plano curto e **liste os arquivos** que vai criar ou alterar.
-3. Uma sessão do Claude por vez neste projeto.
-4. Não altere `ProjectSettings/`, pacotes ou configurações de build sem avisar o motivo.
-5. Quando faltar uma regra no GDD, **não invente em silêncio**: escolha algo simples, registre no GDD com a marca "(provisório)" e me avise no resumo.
-6. Ao terminar um marco, marque `[x]` no GDD e escreva um resumo curto: o que foi feito, o que testar à mão e as decisões tomadas.
+O objetivo é construir o jogo inteiro, do M0 ao M18, **sem parar para pedir aprovação**.
+
+1. Siga os marcos da seção 15 do `GDD.md` em ordem, um depois do outro, até o fim. Não adiante funcionalidades de marcos futuros.
+2. **Não pare para perguntar.** Quando faltar uma regra ou houver dúvida de design, escolha a opção mais simples e coerente com o GDD, registre no GDD com a marca "(provisório)" e siga.
+3. **Ao começar cada sessão, leia `PROGRESS.md`** e continue de onde parou. Ao terminar cada marco, atualize o `PROGRESS.md` (o que foi feito, decisões tomadas, o que o humano precisa testar jogando, pendências) e marque `[x]` no GDD.
+4. **Commit e push ao fim de cada marco:** `git add -A && git commit -m "M<n>: <resumo>" && git push`. Se o push falhar, faça só o commit e anote no PROGRESS.md.
+5. Se algo falhar 3 vezes seguidas (erro que não resolve, ferramenta fora do ar, geração ruim), use uma solução provisória (placeholder, versão simplificada), anote em "Pendências" no PROGRESS.md e siga para o próximo item.
+6. **Só pare de verdade** se: o saldo do PixelLab acabar, algo exigir pagamento, conta ou senha, ou o projeto ficar sem compilar e você não conseguir recuperar nem voltando ao último commit.
+7. Uma sessão do Claude por vez neste projeto. Não altere pacotes ou `ProjectSettings/` sem anotar o motivo no PROGRESS.md.
+8. Para não estourar o contexto: não peça o dump completo de cenas grandes; consulte só o objeto que precisa.
 
 ## Definição de pronto
 
@@ -23,9 +27,9 @@ Um marco só está pronto quando:
 - o projeto compila sem erros e o Console não tem erros nem warnings novos;
 - os testes de EditMode e PlayMode do marco passam;
 - você tirou um screenshot da cena mostrando o resultado;
-- você listou para mim o que preciso testar jogando (o que você não consegue sentir: ritmo, legibilidade, feedback).
+- o PROGRESS.md lista o que o humano precisa testar jogando (o que você não consegue sentir: ritmo, legibilidade, feedback).
 
-Nunca diga que terminou sem cumprir esses itens.
+Nunca marque um marco como pronto sem cumprir esses itens.
 
 ## Arquitetura
 
@@ -70,9 +74,9 @@ Nomes de arquivo em inglês e `snake_case` para arte (`slime_red_attack.png`), `
 ## Arte e áudio
 
 - **Toda a arte do jogo é gerada no PixelLab**, seguindo `ASSETS.md` (regras de estilo, lotes, nomes de arquivo). Os sprites antigos em `Art/_Reference/` são só referência de estilo e não entram no jogo.
-- Gere **um lote por vez**, no marco indicado. Para personagens: 3 variações, **pare e me mostre** para eu aprovar, e só então anime o escolhido.
-- O Peão aprovado é a âncora de estilo de todo o resto.
-- Antes de cada lote, confira o saldo (`get_balance`) e diga quantas gerações o lote vai gastar.
+- Gere **um lote por vez**, no marco indicado. Para personagens: gere 2 a 3 variações, **escolha você mesmo** a que melhor segue as regras de estilo do ASSETS.md (silhueta legível em 32 px, contorno, paleta, vista lateral, direção certa) e anime só a escolhida. Salve as rejeitadas em `Art/_Rejected/` para eu poder trocar depois.
+- O Peão escolhido é a âncora de estilo de todo o resto: use-o como referência nos pedidos seguintes.
+- Antes de cada lote, confira o saldo (`get_balance`) e anote no PROGRESS.md quanto foi gasto. Economize: não gere variações extras de itens pequenos (ícones, cartas, relíquias).
 - Se o PixelLab falhar ou o resultado ficar fora do estilo, use um placeholder simples (retângulo colorido com o nome) e continue o código; anote o que ficou pendente.
 - Áudio: siga a seção "Áudio" do `ASSETS.md` e registre a licença de cada arquivo em `Audio/LICENSES.md`. Nunca use música ou som sem licença clara.
 
@@ -84,5 +88,5 @@ Nomes de arquivo em inglês e `snake_case` para arte (`slime_red_attack.png`), `
 
 ## Git
 
-- Eu faço commit antes de cada sessão. Não reescreva o histórico.
+- Commit e push ao fim de cada marco (ver "Como trabalhar"). Nunca reescreva o histórico nem use `push --force`.
 - `.gitignore` padrão da Unity (`Library/`, `Temp/`, `Logs/`, `obj/`, `Build/`, `UserSettings/`).

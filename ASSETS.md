@@ -13,7 +13,7 @@ Lista de tudo que precisa ser gerado. A arte vem do PixelLab (MCP `pixellab`). O
 - Elementos: Fogo vermelho/laranja, Planta verde, Água azul, Neutro creme/cinza. Cada inimigo elemental leva um detalhe com o símbolo do elemento (chama, folha, gota), não só a cor.
 
 ### Âncora de estilo
-O primeiro asset aprovado (o Peão) vira referência de estilo para todos os outros pedidos. Se o PixelLab aceitar imagem de referência, usar sempre o PNG aprovado do Peão; se não, repetir as regras acima no prompt.
+O primeiro asset escolhido (o Peão) vira referência de estilo para todos os outros pedidos. Se o PixelLab aceitar imagem de referência, usar sempre o PNG escolhido do Peão; se não, repetir as regras acima no prompt.
 
 **Base de prompt (em inglês, o PixelLab responde melhor):**
 `pixel art, side view, dark 1px outline, vivid saturated colors, simple 3-tone shading, transparent background, board game piece made of [material], cute but heroic`
@@ -21,7 +21,7 @@ O primeiro asset aprovado (o Peão) vira referência de estilo para todos os out
 ## Fluxo de geração
 
 1. Gerar um lote por vez, na ordem dos marcos.
-2. Para cada personagem: gerar 3 variações → mostrar para aprovação → animar só o aprovado.
+2. Para cada personagem: gerar 2 a 3 variações, escolher a melhor pelas regras de estilo, animar só a escolhida e guardar as outras em `Art/_Rejected/`.
 3. Conferir `get_balance` antes de cada lote e informar quantas gerações o lote vai gastar.
 4. Salvar em `Assets/_Project/Art/...` com os nomes desta lista.
 

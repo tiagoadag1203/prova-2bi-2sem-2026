@@ -329,7 +329,7 @@ Cartas e relíquias de pacotes bloqueados não aparecem até serem compradas.
 Um marco por vez, na ordem. Um marco só termina com a "definição de pronto" do CLAUDE.md cumprida. Marque `[x]` ao terminar.
 
 ### Bloco A · Fase 1 jogável
-- [ ] **M0 · Base e arte de referência.** Estrutura de pastas, pacotes, Pixel Perfect Camera. Gerar no PixelLab o **lote 1** do ASSETS.md (peão + 3 slimes + dado + casas + ícones de intenção) e parar para aprovação. Depois: importar, fatiar, Animators, cena de teste com todos animando.
+- [ ] **M0 · Base e arte de referência.** Estrutura de pastas, pacotes, Pixel Perfect Camera. Gerar no PixelLab o **lote 1** do ASSETS.md (peão + 3 slimes + dado + casas + ícones de intenção). Importar, fatiar, Animators, cena de teste com todos animando.
 - [ ] **M1 · Dados.** ScriptableObjects da seção 14 e assets de toda a fase 1 (cartas comuns, iniciais, 3 slimes, relíquias comuns). Testes de EditMode.
 - [ ] **M2 · Tabuleiro.** Cena Board, layout da fase 1, dado, movimento, bifurcações, parada no Chefe, casas cinza.
 - [ ] **M3 · Estado da partida.** GameManager + RunState, troca Board ⇄ Battle, morte reinicia.
