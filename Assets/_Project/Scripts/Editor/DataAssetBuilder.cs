@@ -124,6 +124,7 @@ namespace XequeDeTinta.EditorTools
                 Act("Dividir", IntentType.Summon, summon: 2),
                 Act("Coroa Pesada", IntentType.Attack, damage: 6, shield: 8));
             r.king.isBoss = true;
+            r.king.flipX = true;
             r.king.enrageBelowHpFraction = 0.5f;
             r.king.enrageStrength = 2;
             r.king.summonedEnemy = r.mini;

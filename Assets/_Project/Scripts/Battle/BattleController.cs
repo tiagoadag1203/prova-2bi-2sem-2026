@@ -198,6 +198,7 @@ namespace XequeDeTinta.Battle
         {
             var d = e.Data;
             var view = CreateActor("Inimigo_" + e.Name + "_" + index, e, d.sprite, d.animator, 2f * d.spriteScale, EnemyFeet(index), 1);
+            view.Renderer.flipX = d.flipX;
             var col = view.gameObject.AddComponent<BoxCollider2D>();
             col.size = new Vector2(1.8f, 1.8f); col.offset = new Vector2(0f, 1f);
             view.SetSpeed(speed);

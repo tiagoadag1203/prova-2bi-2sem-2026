@@ -43,3 +43,4 @@ MonoBehaviour:
   spriteScale: 1
   animator: {fileID: 9100000, guid: 7f52ff020dc6c4e8097f0b603cde2213, type: 2}
   isBoss: 0
+  flipX: 0

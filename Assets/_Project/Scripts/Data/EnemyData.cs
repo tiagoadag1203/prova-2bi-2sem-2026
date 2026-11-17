@@ -43,5 +43,7 @@ namespace XequeDeTinta.Data
         public float spriteScale = 1f;
         public RuntimeAnimatorController animator;
         public bool isBoss;
+        /// <summary>Espelha o sprite na batalha (a arte original olha para o lado oposto ao herói).</summary>
+        public bool flipX;
     }
 }
