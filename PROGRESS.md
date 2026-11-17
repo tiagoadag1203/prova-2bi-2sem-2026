@@ -3,7 +3,7 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M0 (não iniciado)
+M0 (não iniciado). Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 (nenhum)
