@@ -3,7 +3,7 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M4 (Partida), a iniciar. Escopo: versão enxuta, M0 a M8.
+M5 (Casas e relíquias), a iniciar. Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 - **M0 · Base e arte (lote 1).** Pastas do projeto, câmera Pixel Perfect (640x360, PPU 32), pipeline de importação de arte, lote 1 gerado e importado, clipes e Animators criados, cena `Scenes/M0_Test.unity` com tudo animando. 2 testes de EditMode passam.
@@ -12,6 +12,8 @@ M4 (Partida), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **M2 · Tabuleiro.** Cena `Scenes/Board.unity` (já no Build Settings) com as 12 casas, ligações pontilhadas, as 2 bifurcações, Peão que pula casa a casa, dado que rola, casas resolvidas em cinza, parada no Chefe e HUD (vida, moedas, "Ver deck", botão de rolar, Espaço rola). Lógica pura em `BoardGraph`, `BoardMover`, `BoardProgress`, `DiceRoller`; apresentação em `BoardController`. 14 testes de EditMode (lógica) e 4 de PlayMode (fluxo rolar, bifurcar, escolher, resolver, casa cinza, chefe). Screenshot em `Docs/screenshots/m2_board.png`.
 
 - **M3 · Batalha.** `BattleSystem` (Início, TurnoJogador, TurnoInimigo, Vitória, Derrota), `DeckManager` (compra, reembaralho, descarte, esgotar), `DamageCalc`/`ElementRules`, efeitos de carta e de inimigo como classes pequenas (`DealDamage`, `GainShield`, `ApplyBurn`, `ApplyWeak`, `Heal`, `Stun`; `EnemyAttack`, `EnemyShield`, `EnemyHealAlly`, `EnemySummon`...), IA em `EnemyBrain`. Cena `Scenes/Battle.unity` com `BattleController` (atores animados, barras de vida, status, intenções com ícone e dano, mão de cartas com hover, alvo por clique, energia, contadores, números flutuantes "Eficaz!", painel de vitória/derrota). Animation Events `OnImpact` (quadro 4 dos ataques) e `OnDeathEnd`. 63 testes de EditMode de regra + 5 de PlayMode de fluxo (inclui "o dano só entra no quadro de impacto"). Screenshot em `Docs/screenshots/m3_battle.png`.
+
+- **M4 · Partida.** `RunState` (vida, deck, relíquias, moedas, casa atual e visitadas, filas de encontros e eventos sorteadas pela semente), `GameManager` persistente (`DontDestroyOnLoad`) e a troca Board ⇄ Battle: pisar numa casa de Batalha ou no Chefe lança a batalha pelo `BattleLauncher`; ao vencer volta ao tabuleiro com o painel de recompensa (10 a 15 moedas e 1 entre 3 cartas, ou pular); só então a casa fica cinza. Vida persiste entre batalhas. Derrota (ou vitória no Chefe, por ora) leva ao título. Painéis `Reward` e `Deck` ("Ver deck", com rolagem) em `UI/Panels.cs`. Cena `Title` (logo em texto, Jogar, Sair, volume, Peão e slimes animados). 11 testes de EditMode (RunState) e 14 de PlayMode (inclui os fluxos da partida). Screenshot em `Docs/screenshots/m4_recompensa.png`.
 
 ## Decisões tomadas
 - **Pixel Perfect Camera** vem embutida no URP 17 (`UnityEngine.Rendering.Universal.PixelPerfectCamera`). Nenhum pacote novo foi instalado; `Packages/` e `ProjectSettings/` não foram alterados.
@@ -38,9 +40,14 @@ M4 (Partida), a iniciar. Escopo: versão enxuta, M0 a M8.
 - **Entrega da batalha ao GameManager (M4):** `BattleLauncher.Setup` (entrada) e `BattleLauncher.OnFinished` (saída com `BattleResult`). Sem eles, a cena monta uma batalha de teste (config.battleEncounters[4]). `BattleLauncher.SpeedOverride` acelera a apresentação.
 - **Animator Controllers atualizados no lugar** (`ArtPipeline`), para manter o GUID. Se algum dia reaparecer referência quebrada, rode `Xeque > M1 > Criar assets de dados`, `M2 > Construir cena Board` e `M3 > Construir cena Battle`.
 - **Escala em batalha:** herói 3x, slimes 2x (Mirim 1,2x). Status são texto colorido ("Queim 3", "Fraco 1", "Forç 2", "Atord", "Esc 5"); os ícones de status chegam no lote 2 (M6). Cartas sem ilustração até o M6.
+- **GameManager não cria partida sozinho:** `Ensure(config)` só garante o objeto; `EnsureRun()` cria a partida (o Tabuleiro aberto direto no Editor faz isso). O Título nunca cria partida.
+- **Fim de partida (provisório até o M6):** `GameManager.EndRun(won)` carrega a cena `End` se existir; senão, o `Title`. `LastRunWon` guarda o resultado.
+- **Ouvinte de testes:** `Scripts/Editor/TestFailureLogger.cs` registra no Console `[TESTFAIL]` com a mensagem; o relatório completo fica em `~/Library/Application Support/DefaultCompany/prova-2bi-2sem-2026/TestResults.xml`.
+- **Testes de PlayMode:** o `GameManager` sobrevive às cenas; cada teste destrói o dele no início. Para vencer rápido, os testes põem 1 de vida nos inimigos.
 - Sprites de cartas, relíquias e do Rei Slime ficam nulos até o M6 (lote 2).
 
 ## Para o humano testar jogando
+- **Partida (M4):** abrir `Scenes/Title.unity` e jogar do início: Jogar, rolar o dado, pisar numa Batalha, vencer, escolher a carta e voltar. Conferir se a troca de cena não parece brusca, se o painel de recompensa é claro, se "Ver deck" mostra o deck certo e se a derrota volta ao título. Ainda não há loja, descanso, evento, baú, relíquias nem a tela de vitória (M5/M6).
 - **Batalha (M3):** abrir `Scenes/Battle.unity`, dar Play e jogar uma batalha de 3 inimigos: ritmo das animações e do dano (o golpe acerta no quadro certo do ataque?), se a intenção sobre o inimigo é clara, se os números flutuantes e "Eficaz!" aparecem a tempo de ler, se o hover/enlargement das cartas atrapalha clicar nos inimigos atrás delas, se a mão cobre demais os inimigos, se 3 de energia e 5 cartas dão um turno interessante.
 - A mão ocupa a parte de baixo e as barras de vida dos inimigos ficam logo acima dela; ajustar se parecer apertado.
 - **Tabuleiro (M2):** abrir `Scenes/Board.unity` e jogar: ritmo do dado e do pulo do Peão, se a escolha de caminho (seta dourada, clicar na casa) é clara, se o cinza das casas resolvidas fica legível, se a mensagem do topo ajuda. Hoje a casa só mostra uma mensagem ("Batalha!"); a batalha de verdade entra no M3/M4.

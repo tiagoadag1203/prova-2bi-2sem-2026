@@ -16,6 +16,8 @@ namespace XequeDeTinta.Tests
         [UnitySetUp]
         public IEnumerator Load()
         {
+            // O GameManager persiste entre cenas: cada teste começa com partida nova.
+            if (GameManager.Instance != null) Object.DestroyImmediate(GameManager.Instance.gameObject);
             SceneManager.LoadScene("Board");
             yield return null;
             yield return null;

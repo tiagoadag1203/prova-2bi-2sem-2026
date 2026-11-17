@@ -159,7 +159,7 @@ Um marco por vez, na ordem, seguindo a "definição de pronto" do CLAUDE.md. Mar
 - [x] **M1 · Dados.** ScriptableObjects da seção 11 e os assets de todas as cartas, inimigos, encontros, relíquias, eventos e o layout do tabuleiro. Testes de EditMode.
 - [x] **M2 · Tabuleiro.** Cena Board: casas, dado, movimento, bifurcações, parada no chefe, casas cinza.
 - [x] **M3 · Batalha.** Máquina de estados, energia, compra/descarte/reembaralho, cartas, dano, escudo, elementos, status, IA dos 3 slimes, intenções, Animation Events. Lógica com testes de EditMode.
-- [ ] **M4 · Partida.** GameManager e RunState, troca Board ⇄ Battle, recompensa de cartas e moedas, derrota volta ao título.
+- [x] **M4 · Partida.** GameManager e RunState, troca Board ⇄ Battle, recompensa de cartas e moedas, derrota volta ao título.
 - [ ] **M5 · Casas e relíquias.** Loja, Descanso, Evento, Baú e o efeito das 5 relíquias.
 - [ ] **M6 · Chefe e telas.** Gerar o **lote 2**. Rei Slime, Slime Mirim, telas de título, pausa, vitória e derrota.
 - [ ] **M7 · Áudio e acabamento.** Sons e músicas, números de dano, tremor de tela leve, flash de dano, transições.

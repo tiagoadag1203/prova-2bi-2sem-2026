@@ -45,8 +45,10 @@ namespace XequeDeTinta.Board
         public int CurrentTileId => Progress.CurrentTile;
         public string Message => messageText != null ? messageText.text : "";
 
-        // HUD (alimentado pelo RunState a partir do M4)
-        public int hp = 50, maxHp = 50, coins;
+        public RunState Run { get; private set; }
+        /// <summary>Painel de recompensa visível (esperando o jogador escolher).</summary>
+        public bool RewardVisible => rewardPanel != null;
+        GameObject rewardPanel, deckPanel;
 
         BoardGraph graph;
         BoardMover mover;
@@ -57,6 +59,7 @@ namespace XequeDeTinta.Board
         SpriteRenderer diceRenderer;
         TextMeshProUGUI statusText, messageText;
         Button rollButton;
+        Canvas hudCanvas;
         Camera cam;
         int chosen = -1;
         Sprite dotSprite, arrowSprite;
@@ -67,7 +70,9 @@ namespace XequeDeTinta.Board
         {
             cam = Camera.main;
             graph = new BoardGraph(config.board.tiles);
-            if (Progress == null) Progress = new BoardProgress(config.board.startTileId);
+            var gm = GameManager.Ensure(config);
+            Run = gm.EnsureRun();
+            Progress = Run.Progress;
             mover = new BoardMover(graph, Progress.CurrentTile);
             dotSprite = MakeDot();
             arrowSprite = MakeArrow();
@@ -77,6 +82,8 @@ namespace XequeDeTinta.Board
             BuildHud();
             SetState(BoardState.Idle);
             SetMessage("Role o dado para andar!");
+            foreach (var id in Progress.Visited) tileRenderers[id].color = VisitedTint;
+            if (Run.PendingTileId >= 0) StartCoroutine(ResumeAfterBattle());
         }
 
         // ---------- Construção ----------
@@ -146,6 +153,7 @@ namespace XequeDeTinta.Board
         void BuildHud()
         {
             var canvas = UIFactory.CreateCanvas("HUD", 10, transform);
+            hudCanvas = canvas;
             UIFactory.EnsureEventSystem();
 
             statusText = UIFactory.CreateText("Status", canvas.transform, "", 8, Palette.Cream, TextAlignmentOptions.TopLeft, false);
@@ -163,19 +171,20 @@ namespace XequeDeTinta.Board
             rollButton = UIFactory.CreateButton("Rolar", canvas.transform, "Rolar dado (Espaço)",
                 new Vector2(0.5f, 0), new Vector2(200, 20), new Vector2(0, 8), RollDice);
             UIFactory.CreateButton("VerDeck", canvas.transform, "Ver deck",
-                new Vector2(1, 1), new Vector2(70, 18), new Vector2(-8, -8), () => DeckRequested?.Invoke());
+                new Vector2(1, 1), new Vector2(70, 18), new Vector2(-8, -8), OpenDeck);
             RefreshHud();
         }
 
-        public void SetHud(int hp, int maxHp, int coins)
+        public void RefreshHud()
         {
-            this.hp = hp; this.maxHp = maxHp; this.coins = coins;
-            RefreshHud();
+            if (statusText != null && Run != null) statusText.text = $"Vida {Run.Hp}/{Run.MaxHp}   Moedas {Run.Coins}";
         }
 
-        void RefreshHud()
+        void OpenDeck()
         {
-            if (statusText != null) statusText.text = $"Vida {hp}/{maxHp}   Moedas {coins}";
+            if (deckPanel != null || rewardPanel != null) return;
+            DeckRequested?.Invoke();
+            deckPanel = Panels.Deck(hudCanvas.transform, Run.Deck, () => { Destroy(deckPanel); deckPanel = null; });
         }
 
         void SetMessage(string text) { if (messageText != null) messageText.text = text; }
@@ -330,7 +339,7 @@ namespace XequeDeTinta.Board
                 bool done = false;
                 SetMessage(Describe(tile.type));
                 if (Resolver != null) Resolver(tile, () => done = true);
-                else done = true;
+                else DefaultResolve(tile, () => done = true);
                 while (!done) yield return null;
                 Progress.MarkVisited(tile.id);
                 tileRenderers[tile.id].color = VisitedTint;
@@ -339,6 +348,61 @@ namespace XequeDeTinta.Board
             SetState(tile.type == TileType.Boss ? BoardState.Finished : BoardState.Idle);
             if (tile.type == TileType.Boss) SetMessage("Chegou ao Chefe!");
         }
+
+        /// <summary>Resolução padrão da casa. Batalha e Chefe trocam de cena; as demais casas entram no M5.</summary>
+        void DefaultResolve(BoardTile tile, Action done)
+        {
+            switch (tile.type)
+            {
+                case TileType.Battle:
+                case TileType.Boss:
+                    GameManager.Instance.StartBattle(tile);   // a cena Board é descarregada; ResumeAfterBattle continua
+                    break;
+                default:
+                    done();
+                    break;
+            }
+        }
+
+        /// <summary>Volta da batalha vencida: mostra a recompensa, aplica a escolha e só então marca a casa como resolvida.</summary>
+        IEnumerator ResumeAfterBattle()
+        {
+            SetState(BoardState.Resolving);
+            int tileId = Run.PendingTileId;
+            RefreshHud();
+            if (Run.Reward != null)
+            {
+                int choice = -2;
+                SetMessage("Escolha sua recompensa");
+                pickReward = i => choice = i;
+                rewardPanel = Panels.Reward(hudCanvas.transform, Run.Reward, i => pickReward?.Invoke(i));
+                while (choice == -2) yield return null;
+                pickReward = null;
+                ClaimReward(choice);
+            }
+            Run.PendingTileId = -1;
+            Progress.MarkVisited(tileId);
+            tileRenderers[tileId].color = VisitedTint;
+            SetState(BoardState.Idle);
+            SetMessage("Role o dado para andar!");
+        }
+
+        Action<int> pickReward;
+
+        /// <summary>Aplica a recompensa: moedas e a carta escolhida (índice) ou nenhuma (-1).</summary>
+        public void ClaimReward(int index)
+        {
+            var r = Run.Reward;
+            if (r == null) return;
+            Run.AddCoins(r.Coins);
+            if (index >= 0 && index < r.Choices.Count) Run.AddCard(r.Choices[index]);
+            Run.Reward = null;
+            if (rewardPanel != null) { Destroy(rewardPanel); rewardPanel = null; }
+            RefreshHud();
+        }
+
+        /// <summary>Escolhe a carta de índice i no painel de recompensa (-1 pula). Mesmo caminho do clique; usado pelos testes.</summary>
+        public void PickReward(int index) => pickReward?.Invoke(index);
 
         public static string Describe(TileType t)
         {

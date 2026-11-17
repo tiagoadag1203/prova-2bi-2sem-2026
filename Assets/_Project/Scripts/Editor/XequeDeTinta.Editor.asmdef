@@ -4,6 +4,8 @@
     "references": [
         "XequeDeTinta.Runtime",
         "Unity.TextMeshPro",
+        "UnityEditor.TestRunner",
+        "UnityEngine.TestRunner",
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.RenderPipelines.Universal.2D.Runtime"
     ],
