@@ -3,7 +3,7 @@
 Diário de construção mantido pelo Claude Code. Leia ao começar cada sessão e atualize ao fim de cada marco.
 
 ## Marco atual
-M8 (Fechamento), a iniciar. Escopo: versão enxuta, M0 a M8.
+M8 (Fechamento), EM ANDAMENTO (não concluído). M0 a M7 prontos e enviados. Escopo: versão enxuta, M0 a M8.
 
 ## Concluídos
 - **M0 · Base e arte (lote 1).** Pastas do projeto, câmera Pixel Perfect (640x360, PPU 32), pipeline de importação de arte, lote 1 gerado e importado, clipes e Animators criados, cena `Scenes/M0_Test.unity` com tudo animando. 2 testes de EditMode passam.
@@ -78,6 +78,12 @@ M8 (Fechamento), a iniciar. Escopo: versão enxuta, M0 a M8.
 - O Peão ficou menor e menos "cheio" que os slimes (a figura ocupa uns 20 px do quadro de 44). Avaliar se precisa ampliar.
 - O Slime Vermelho ficou escuro; a chama no topo é pequena. Avaliar se a leitura "Fogo" está clara ou se vale regenerar.
 - As faces do dado estão inconsistentes entre si; avaliar se incomoda.
+
+## M8 · estado atual (parcial, limite de uso atingido)
+- **Feito:** robô de playtest (`Scripts/Bot/BotPolicy.cs`, `RunSimulator.cs`) que joga a partida inteira em lógica pura, e `Tests/EditMode/BalanceTests.cs` (simulação de 400 partidas, faixas de vitória e duração, batalhas comuns vencíveis, exploração do tamanho do dado).
+- **Achado do playtest:** com 12 casas e d6 o peão só resolve ~2 batalhas por partida (duração estimada ~6,5 min, contra 10 a 15 do GDD); o robô vence 77% e morre só no Chefe; as batalhas comuns são fáceis (60/60 com deck inicial). O teste `ADuracaoEstimadaFicaEntre10e15Minutos` **falha de propósito** até o balanceamento ser ajustado.
+- **Falta:** (1) rodar `ExplorarTamanhoDoDado_SoRegistraNoConsole` e escolher `diceSides` (candidatos 3 ou 2) em `GameConfig` via `DataAssetBuilder`, e talvez reforçar os slimes comuns; anotar a decisão como (provisório) no GDD; (2) playtest automático em PlayMode com as cenas reais usando `BotPolicy`; (3) builds Mac e Windows (módulo Windows já instalado) em `Build/`; (4) README atualizado; (5) marcar M8 `[x]` no GDD.
+- Há 1 teste vermelho conhecido (duração), os demais passam (EditMode e 31 de PlayMode no último ciclo completo).
 
 ## Pendências
 - Ícones de intenção (16x16) e ícones das casas ainda não foram avaliados em tamanho real dentro do jogo.
