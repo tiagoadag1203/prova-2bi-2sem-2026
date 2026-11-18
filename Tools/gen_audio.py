@@ -7,8 +7,10 @@ Obra original dos autores do projeto, dedicada ao domínio público (CC0). Uso:
 """
 import math, os, random, struct, sys, wave
 
-SR = 22050
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Assets", "_Project", "Audio")
+# Padrão do jogo: 22,05 kHz em Assets/_Project/Audio. Para a entrega final (44,1 kHz, 16 bits, mono):
+#   XDT_SR=44100 XDT_OUT=<pasta> python3 Tools/gen_audio.py
+SR = int(os.environ.get("XDT_SR", "22050"))
+OUT = os.environ.get("XDT_OUT") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Assets", "_Project", "Audio")
 random.seed(7)
 
 

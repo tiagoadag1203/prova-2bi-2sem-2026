@@ -123,3 +123,11 @@ Todos os marcos (M0 a M8) concluídos. Resta só a verificação humana jogando 
 | Tema "O Tabuleiro Manchado" | 83 (2 fundos, Rei Slime, 3 slimes + 1 refeito, peão de tinta, animações) | 1792 de 2000 |
 
 - **Correção do Slime Mirim (peão de tinta):** o sprite saía sem rosto e parecia de costas para o Peão. Refeito no PixelLab com olhos e boca visíveis (versão antiga em `Art/_Rejected/ink_pawn_sem_rosto/`), animações idle/attack/hit/death regeradas, dados recriados. Testes: arte e 37 de PlayMode passando; Console limpo; `m10_chefe.png` atualizado (Rei Slime + 2 peões).
+
+## Entrega final (18/11/2026)
+- **Pasta de entrega** `../Entrega-Xeque-de-Tinta`: Documentos (9 `.md` + `.pdf`), Sprites (sheets + JSON + prancha), Sons (17 `.wav` 44,1 kHz + lista), Builds (Mac e Windows) e `Projeto_Unity.zip`. Fontes dos documentos em `Docs/Entrega/` (inclui `03_Manual_do_Jogo.html`, o encarte).
+- **Ferramentas novas:** `Tools/build_docs.py` (md → HTML → PDF pelo Chrome headless), `Tools/export_entrega_sprites.py` (monta as sheets), `Tools/gen_audio.py` agora aceita `XDT_SR` e `XDT_OUT` (padrão do jogo inalterado, 22,05 kHz), `Scripts/Editor/BuildTools.cs` (menu `Xeque > Build`).
+- **Testes de hoje:** EditMode 176/176. PlayMode 36/37 na execução completa em batchmode; `Musica_TrocaPorCena_E_TransicaoClareiaDepois` falhou nela e passou isolado (instável em batchmode, a investigar). `FullRunBotTests` segue `[Explicit]`.
+- **Build do Windows refeita** com o tema do xadrez (0 erros, 130 MB). Não executada.
+- **Pendências novas:** erro de Console `'Peao' AnimationEvent 'OnDeathEnd' ... has no receiver` ao abrir a tela de Derrota (Peão da cena End sem `ActorView`); botão "Voltar ao título" da tela de Vitória quebra em 2 linhas e o Peão passa atrás dele; desempenho sem Profiler. Regras do jogo não foram alteradas.
+- **Screenshots novos** em `Docs/Entrega/screenshots/` (descanso, baú, evento, loja, recompensa, deck, as 12 cartas, pausa, vitória, derrota).

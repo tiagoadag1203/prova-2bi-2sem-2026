@@ -1,0 +1,608 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Xeque de Tinta · Manual do Jogo</title>
+<style>
+@font-face { font-family: 'PS2P'; src: url('img/PressStart2P-Regular.ttf'); }
+@page { size: A4; margin: 0; }
+@page :first { margin: 0; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html { background: #2A1B3D; }
+body { margin: 0; background: #2A1B3D; color: #F4E9D8; font-family: 'Trebuchet MS', 'Helvetica Neue', Arial, sans-serif; font-size: 10.5pt; line-height: 1.5; }
+.cover { height: 296mm; page-break-after: always; position: relative; text-align: center; overflow: hidden;
+  background: linear-gradient(rgba(42,27,61,.55), rgba(42,27,61,.92)), url('img/bg_board.png') center/cover; image-rendering: pixelated; }
+.cover img.logo { width: 170mm; margin-top: 34mm; image-rendering: pixelated; filter: drop-shadow(0 6px 0 rgba(0,0,0,.5)); }
+.cover .tag { font-family: 'PS2P'; color: #F2C14E; font-size: 12pt; margin: 14mm 18mm 0; line-height: 1.7; }
+.cover .sub { font-family: 'PS2P'; font-size: 9pt; color: #F4E9D8; margin-top: 12mm; line-height: 1.9; }
+.cover .heroes { position: absolute; bottom: 30mm; left: 0; right: 0; }
+.cover .heroes img { height: 46mm; margin: 0 4mm; image-rendering: pixelated; }
+.cover .foot { position: absolute; bottom: 10mm; left: 0; right: 0; font-family: 'PS2P'; font-size: 7pt; color: #F4E9D8; opacity: .85; line-height: 1.8; }
+section.page { padding: 14mm 14mm 10mm; page-break-before: always; min-height: 296mm; }
+section.page:first-of-type { page-break-before: auto; }
+h1 { display: none; }
+h2 { font-family: 'PS2P'; font-size: 13pt; color: #F2C14E; margin: 0 0 8mm; padding-bottom: 4mm; border-bottom: 3px solid #F2C14E; line-height: 1.5; }
+h3 { font-family: 'PS2P'; font-size: 9.5pt; color: #8fe39a; margin: 7mm 0 2mm; line-height: 1.6; page-break-after: avoid; }
+p { margin: 2mm 0 3mm; }
+strong { color: #F2C14E; }
+em { color: #c9b8ec; }
+.lead { font-size: 13pt; color: #F4E9D8; border-left: 5px solid #F2C14E; padding-left: 5mm; margin: 4mm 0; }
+.meta { font-size: 8.5pt; color: #bfb0d8; margin-bottom: 8mm; }
+.callout { font-family: 'PS2P'; font-size: 8.5pt; line-height: 1.9; text-align: center; background: #F2C14E; color: #2A1B3D; padding: 5mm; margin: 6mm 0; border-radius: 3mm; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; margin: 3mm 0 5mm; font-size: 9pt; background: #F4E9D8; color: #2A1B3D; border-radius: 2mm; overflow: hidden; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th { background: #F2C14E; color: #2A1B3D; text-align: left; padding: 2mm 3mm; font-family: 'PS2P'; font-size: 7pt; }
+td { padding: 2mm 3mm; border-top: 1px solid #d9c9a8; vertical-align: middle; }
+td strong { color: #2A1B3D; }
+td img { height: 11mm; vertical-align: middle; margin-right: 2mm; image-rendering: pixelated; }
+tr:nth-child(even) td { background: #efe0c6; }
+section.page > p > img { image-rendering: pixelated; }
+p > img[src*="_x6"], p > img[src*="_x8"] { height: 30mm; display: block; margin: 2mm 0; }
+p > img[src*="screenshots"] { width: 100%; border: 3px solid #F2C14E; border-radius: 2mm; margin: 2mm 0; image-rendering: auto; }
+ul, ol { padding-left: 6mm; } li { margin-bottom: 1.5mm; }
+code { background: rgba(0,0,0,.3); padding: 0 2mm; border-radius: 1mm; }
+</style></head><body><div class="cover">
+<img class="logo" src="img/logo_x3.png" alt="Xeque de Tinta">
+<div class="tag">A tinta mágica afogou as peças.<br>Só o peão pode salvar o tabuleiro.</div>
+<div class="sub">MANUAL DO JOGO</div>
+<div class="heroes"><img src="img/pawn_idle0_x6.png"><img src="img/king_slime_idle0_x6.png" style="height:60mm"><img src="img/slime_green_idle0_x6.png"><img src="img/slime_red_idle0_x6.png"></div>
+<div class="foot">Roguelite de tabuleiro com batalhas de cartas · Unity 6 · PC<br>Márcio Dias de Lima Filho · Tiago Augusto Dal'Acqua Gonçalves</div>
+</div><section class="page"><h1>Manual do Jogo · Xeque de Tinta</h1>
+<div class="lead">Um roguelite de tabuleiro com batalhas de cartas em turnos. Role o dado, ande pelas casas, monte seu baralho e limpe o tabuleiro do Rei Slime.</div>
+
+<div class="meta">PC (Windows e Mac) · 1 jogador · mouse · partida de 10 a 15 minutos · Autores: Márcio Dias de Lima Filho e Tiago Augusto Dal'Acqua Gonçalves</div>
+
+<h2>1. A história</h2>
+<p>Num salão antigo, à luz de uma vela, existe um <strong>tabuleiro de xadrez gigante</strong>. Certa noite, alguém derramou sobre ele uma <strong>tinta mágica roxa e verde</strong>. A tinta escorreu pelas casas e "afogou" as peças: torres, cavalos e bispos viraram <strong>slimes</strong>, e o próprio rei do xadrez virou o <strong>Rei Slime</strong>, com a coroa afundada na gosma.</p>
+<p>Só uma peça escapou: o <strong>Peão</strong>, a peça mais fraca do jogo. Sem poder nenhum, só com uma espadinha de ferro, um cachecol vermelho e muita teimosia, ele precisa atravessar o tabuleiro manchado, casa por casa, até enfrentar o Rei Slime e <strong>secar a tinta de vez</strong>.</p>
+<div class="callout">A tinta mágica afogou as peças. Só o peão pode salvar o tabuleiro.</div>
+
+<p><img alt="Tela de título" src="screenshots/m10_titulo.png" /></p>
+</section><section class="page"><h2>2. O herói: o Peão</h2>
+<p><img alt="Peão" src="img/pawn_idle0_x6.png" /></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Vida</strong></td>
+<td>50</td>
+</tr>
+<tr>
+<td><strong>Elemento</strong></td>
+<td>Neutro (os elementos vêm das cartas que ele joga)</td>
+</tr>
+<tr>
+<td><strong>Energia</strong></td>
+<td>3 por turno</td>
+</tr>
+<tr>
+<td><strong>Mão</strong></td>
+<td>5 cartas por turno</td>
+</tr>
+<tr>
+<td><strong>Deck inicial</strong></td>
+<td>5 Golpe, 4 Defender e 1 Investida</td>
+</tr>
+</tbody>
+</table>
+<p>O Peão anda pelo tabuleiro (pulinhos de casa em casa), ataca com a espada na batalha, recua quando apanha e tomba quando cai. Sua força cresce com as <strong>cartas</strong> que você ganha, compra e melhora durante a partida e com as <strong>relíquias</strong> que encontra.</p>
+</section><section class="page"><h2>3. Os inimigos</h2>
+<p>Cada slime carrega, afundada na gosma, uma peça de xadrez e um detalhe do seu elemento (folha, chama ou gota). Acima da cabeça de cada inimigo aparece a <strong>intenção</strong>: o que ele vai fazer no próximo turno, com o número do dano quando for um ataque. Use isso para decidir entre atacar e se defender.</p>
+<h3>Slime Verde · a torre</h3>
+<p><img alt="Slime Verde" src="img/slime_green_idle0_x6.png" /></p>
+<p><strong>Vida 18 · Elemento Planta.</strong> Carrega uma torre cinza afundada no flanco. A cada turno <strong>sorteia</strong>: ataca com <strong>Investida (5 de dano)</strong> ou ganha <strong>4 de escudo</strong> com Casca. Nunca faz escudo duas vezes seguidas. <em>Fraco contra Fogo.</em></p>
+<h3>Slime Vermelho · o cavalo</h3>
+<p><img alt="Slime Vermelho" src="img/slime_red_idle0_x6.png" /></p>
+<p><strong>Vida 14 · Elemento Fogo.</strong> Tem uma chama no topo e uma cabeça de cavalo de madeira afundada no corpo. Ataca com <strong>Investida (7 de dano)</strong>. A cada <strong>3 turnos</strong>, em vez de atacar, solta <strong>Chama</strong> e aplica <strong>Queimadura 2</strong> em você. <em>Fraco contra Água.</em></p>
+<h3>Slime Azul · o bispo</h3>
+<p><img alt="Slime Azul" src="img/slime_blue_idle0_x6.png" /></p>
+<p><strong>Vida 22 · Elemento Água.</strong> Tem uma gota no topo e o bispo de mitra pontuda afundado. Todo turno usa <strong>Respingo: 4 de dano e cura 3 de vida</strong> do aliado mais ferido (ou dele mesmo, se estiver sozinho). É o mais resistente dos três. <em>Fraco contra Planta.</em></p>
+<h3>Slime Mirim · o peão de tinta</h3>
+<p><img alt="Slime Mirim" src="img/ink_pawn_idle0_x6.png" /></p>
+<p><strong>Vida 8 · Elemento Planta.</strong> Um pequeno peão de xadrez derretendo, com rostinho. Só aparece quando o Rei Slime o invoca. Ataca com <strong>Cutucada: 3 de dano</strong>. Um Mirim recém-invocado só age no turno seguinte. <em>Fraco contra Fogo.</em></p>
+<h3>O Chefe: Rei Slime</h3>
+<p><img alt="Rei Slime" src="img/king_slime_idle0_x6.png" /></p>
+<p><strong>Vida 70 · Elemento Planta · tamanho duplo (64 px).</strong> O rei do xadrez tomado pela tinta, com a coroa de rei (com a cruz) afundada na gosma. Ele repete um <strong>ciclo de três ações</strong>:</p>
+<ol>
+<li><strong>Esmagar:</strong> 12 de dano.</li>
+<li><strong>Dividir:</strong> invoca <strong>2 Slimes Mirins</strong> (no máximo 2 vivos ao mesmo tempo).</li>
+<li><strong>Coroa Pesada:</strong> ganha 8 de escudo e causa 6 de dano.</li>
+</ol>
+<p>Quando a vida cai <strong>abaixo de 50%</strong>, ele se enfurece e ganha <strong>2 de Força</strong> (uma vez só): todos os ataques dele passam a bater mais forte. <em>Fraco contra Fogo.</em></p>
+<p><img alt="Batalha contra o Rei Slime" src="screenshots/m10_chefe.png" /></p>
+</section><section class="page"><h2>4. Comandos</h2>
+<p>O jogo é todo controlado pelo <strong>mouse</strong>. Há dois atalhos de teclado.</p>
+<table>
+<thead>
+<tr>
+<th>Ação</th>
+<th>Como fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rolar o dado e andar</td>
+<td>Clique em <strong>Rolar dado</strong> ou aperte <strong>Espaço</strong></td>
+</tr>
+<tr>
+<td>Escolher o caminho numa bifurcação</td>
+<td>Clique na casa para onde quer ir (a seta dourada indica as opções)</td>
+</tr>
+<tr>
+<td>Ver seu baralho</td>
+<td>Botão <strong>Ver deck</strong>, no tabuleiro</td>
+</tr>
+<tr>
+<td>Jogar uma carta</td>
+<td>Clique na carta da mão. Se ela precisar de alvo, clique no inimigo</td>
+</tr>
+<tr>
+<td>Cancelar a escolha de alvo</td>
+<td><strong>Esc</strong> ou botão direito do mouse</td>
+</tr>
+<tr>
+<td>Encerrar o turno</td>
+<td>Botão <strong>Encerrar turno</strong> ou <strong>Espaço</strong></td>
+</tr>
+<tr>
+<td>Pausar</td>
+<td><strong>Esc</strong> (menu: Continuar, Voltar ao título)</td>
+</tr>
+<tr>
+<td>Ajustar o volume</td>
+<td>Controle deslizante na tela de título</td>
+</tr>
+<tr>
+<td>Comprar, escolher, confirmar</td>
+<td>Clique nos botões dos painéis</td>
+</tr>
+</tbody>
+</table>
+</section><section class="page"><h2>5. Como jogar uma partida</h2>
+<ol>
+<li><strong>Título.</strong> Clique em <strong>Jogar</strong>. Uma caixa conta a história e, ao clicar em <strong>Começar</strong>, o dado é liberado.</li>
+<li><strong>Tabuleiro.</strong> O mapa de 12 casas está sempre visível. Role o dado (de 1 a 3) e o Peão anda essa quantidade de casas. Só a casa onde ele <strong>para</strong> acontece. Nas duas <strong>bifurcações</strong> você escolhe o caminho clicando. Se o Peão passa pela casa do <strong>Chefe</strong>, ele <strong>para ali</strong>.</li>
+<li><strong>Casa resolvida.</strong> Depois de resolvida, a casa fica <strong>cinza</strong>; parar nela de novo não faz nada.</li>
+<li><strong>Batalha.</strong> Ao parar numa casa de Batalha, a cena muda para o duelo (veja a seção 6).</li>
+<li><strong>Recompensa.</strong> Vencida a batalha, você ganha de <strong>10 a 15 moedas</strong> e escolhe <strong>1 entre 3 cartas</strong> novas (ou pula).</li>
+<li><strong>Repita</strong> até o <strong>Rei Slime</strong>. Vença-o para ganhar o jogo.</li>
+</ol>
+<p><img alt="O tabuleiro" src="screenshots/m10_tabuleiro.png" /></p>
+<p><img alt="Escolha de caminho" src="screenshots/m10_escolha_caminho.png" /></p>
+<h3>A batalha</h3>
+<p><img alt="A batalha" src="screenshots/m10_batalha.png" /></p>
+<p>Você fica à esquerda; até 3 inimigos ficam à direita. A cada turno seu:</p>
+<ul>
+<li>seu <strong>escudo</strong> zera, você recebe <strong>3 de energia</strong> e compra <strong>5 cartas</strong>;</li>
+<li>cada carta gasta a energia indicada no canto superior esquerdo (o número dourado);</li>
+<li>jogue quantas cartas conseguir pagar e clique em <strong>Encerrar turno</strong>;</li>
+<li>as cartas que sobraram na mão vão para o <strong>descarte</strong>; quando o <strong>baralho de compra</strong> acaba, o descarte é embaralhado e volta a ser o baralho;</li>
+<li>depois <strong>cada inimigo age</strong>, da esquerda para a direita, executando o que a intenção mostrava.</li>
+</ul>
+<p>Você <strong>vence</strong> quando todos os inimigos caem. Você <strong>perde</strong> quando sua vida chega a zero.</p>
+<p>O desenho abaixo mostra a <strong>pilha de Compra e a de Descarte</strong> (à direita da mão), a <strong>energia</strong> (à esquerda) e o botão de encerrar turno.</p>
+<p><img alt="Pilhas de compra e descarte" src="screenshots/m10_batalha_descarte.png" /></p>
+</section><section class="page"><h2>6. Elementos: o ciclo da tinta</h2>
+<p>As cartas e os inimigos têm elemento. O ataque de um elemento <strong>forte</strong> contra um elemento <strong>fraco</strong> causa <strong>+50% de dano</strong> e mostra <strong>"Eficaz!"</strong> em dourado.</p>
+<table>
+<thead>
+<tr>
+<th>Ícone</th>
+<th>Elemento</th>
+<th>Vence</th>
+<th>Perde para</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Fogo" src="img/element_fire_x8.png" /></td>
+<td><strong>Fogo</strong></td>
+<td>Planta</td>
+<td>Água</td>
+</tr>
+<tr>
+<td><img alt="Planta" src="img/element_plant_x8.png" /></td>
+<td><strong>Planta</strong></td>
+<td>Água</td>
+<td>Fogo</td>
+</tr>
+<tr>
+<td><img alt="Água" src="img/element_water_x8.png" /></td>
+<td><strong>Água</strong></td>
+<td>Fogo</td>
+<td>Planta</td>
+</tr>
+<tr>
+<td><img alt="Neutro" src="img/element_neutral_x8.png" /></td>
+<td><strong>Neutro</strong></td>
+<td>ninguém</td>
+<td>ninguém</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fogo vence Planta, Planta vence Água, Água vence Fogo.</strong> Como o Slime Verde, o Rei Slime e o Mirim são de Planta, <strong>cartas de Fogo</strong> (Bola de Fogo, Brasa) são suas melhores amigas contra a maioria dos inimigos. Contra o Slime Vermelho (Fogo), use Água; contra o Azul (Água), use Planta.</p>
+<p><strong>Como o dano é calculado:</strong> dano base da carta + sua Força → ×1,5 se for eficaz → ×0,75 se quem ataca estiver Fraco → arredonda para baixo → o <strong>escudo</strong> do alvo absorve primeiro, e o que sobrar tira vida.</p>
+</section><section class="page"><h2>7. Status</h2>
+<table>
+<thead>
+<tr>
+<th>Ícone</th>
+<th>Status</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Escudo" src="img/status_shield_x8.png" /></td>
+<td><strong>Escudo</strong></td>
+<td>Absorve dano antes da vida. Zera no início do turno de quem o tem.</td>
+</tr>
+<tr>
+<td><img alt="Queimadura" src="img/status_burn_x8.png" /></td>
+<td><strong>Queimadura (N)</strong></td>
+<td>No início do turno do alvo, ele perde <strong>2 de vida</strong> (ignora o escudo). Dura N turnos; aplicar de novo soma turnos.</td>
+</tr>
+<tr>
+<td><img alt="Fraco" src="img/status_weak_x8.png" /></td>
+<td><strong>Fraco (N)</strong></td>
+<td>Quem está Fraco causa <strong>25% menos dano</strong> por N turnos.</td>
+</tr>
+<tr>
+<td><img alt="Força" src="img/status_strength_x8.png" /></td>
+<td><strong>Força (N)</strong></td>
+<td><strong>+N de dano</strong> em cada ataque até o fim da batalha.</td>
+</tr>
+<tr>
+<td><img alt="Atordoado" src="img/status_stun_x8.png" /></td>
+<td><strong>Atordoado</strong></td>
+<td><strong>Pula a próxima ação</strong>. O inimigo atordoado guarda a intenção para o turno seguinte.</td>
+</tr>
+</tbody>
+</table>
+<h3>Intenções dos inimigos</h3>
+<table>
+<thead>
+<tr>
+<th>Ícone</th>
+<th>Intenção</th>
+<th>Significa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Ataque" src="img/intent_attack_x8.png" /></td>
+<td><strong>Ataque</strong></td>
+<td>Vai causar dano (o número aparece ao lado)</td>
+</tr>
+<tr>
+<td><img alt="Defesa" src="img/intent_defend_x8.png" /></td>
+<td><strong>Defesa</strong></td>
+<td>Vai ganhar escudo</td>
+</tr>
+<tr>
+<td><img alt="Buff" src="img/intent_buff_x8.png" /></td>
+<td><strong>Buff</strong></td>
+<td>Vai se fortalecer</td>
+</tr>
+<tr>
+<td><img alt="Debuff" src="img/intent_debuff_x8.png" /></td>
+<td><strong>Debuff</strong></td>
+<td>Vai aplicar um efeito ruim em você (por exemplo, Queimadura)</td>
+</tr>
+<tr>
+<td><img alt="Invocar" src="img/intent_summon_x8.png" /></td>
+<td><strong>Invocar</strong></td>
+<td>Vai chamar reforços</td>
+</tr>
+</tbody>
+</table>
+</section><section class="page"><h2>8. As cartas: ataques e skills</h2>
+<p>Cada carta mostra o <strong>custo de energia</strong>, o <strong>nome</strong>, a <strong>ilustração</strong>, o <strong>efeito</strong> e o <strong>elemento</strong> (a cor da moldura também indica: vermelho Fogo, verde Planta, azul Água, cinza Neutro). Uma carta <strong>melhorada</strong> (no Descanso ou pela Poça de Tinta) ganha um "+" no nome e valores maiores. Cartas com <strong>Esgota</strong> saem da batalha depois de usadas.</p>
+<p><img alt="As 12 cartas do jogo" src="screenshots/tela_allcards.png" /></p>
+<h3>Cartas iniciais</h3>
+<table>
+<thead>
+<tr>
+<th>Carta</th>
+<th>Custo</th>
+<th>Elemento</th>
+<th>Efeito</th>
+<th>Melhorada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Golpe" src="img/card_golpe_x6.png" /> <strong>Golpe</strong></td>
+<td>1</td>
+<td>Neutro</td>
+<td>6 de dano</td>
+<td>9</td>
+</tr>
+<tr>
+<td><img alt="Defender" src="img/card_defender_x6.png" /> <strong>Defender</strong></td>
+<td>1</td>
+<td>Neutro</td>
+<td>5 de escudo</td>
+<td>8</td>
+</tr>
+<tr>
+<td><img alt="Investida" src="img/card_investida_x6.png" /> <strong>Investida</strong></td>
+<td>2</td>
+<td>Neutro</td>
+<td>10 de dano e <strong>Atordoa</strong> o alvo</td>
+<td>14</td>
+</tr>
+</tbody>
+</table>
+<h3>Cartas de recompensa (ataques e skills)</h3>
+<table>
+<thead>
+<tr>
+<th>Carta</th>
+<th>Custo</th>
+<th>Elemento</th>
+<th>Tipo</th>
+<th>Efeito</th>
+<th>Melhorada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Bola de Fogo" src="img/card_bola_de_fogo_x6.png" /> <strong>Bola de Fogo</strong></td>
+<td>1</td>
+<td>Fogo</td>
+<td>Ataque</td>
+<td>7 de dano</td>
+<td>10</td>
+</tr>
+<tr>
+<td><img alt="Brasa" src="img/card_brasa_x6.png" /> <strong>Brasa</strong></td>
+<td>1</td>
+<td>Fogo</td>
+<td>Skill</td>
+<td><strong>Queimadura 3</strong></td>
+<td>Queimadura 5</td>
+</tr>
+<tr>
+<td><img alt="Raiz" src="img/card_raiz_x6.png" /> <strong>Raiz</strong></td>
+<td>1</td>
+<td>Planta</td>
+<td>Ataque + skill</td>
+<td>4 de dano <strong>e</strong> 4 de escudo</td>
+<td>6 e 6</td>
+</tr>
+<tr>
+<td><img alt="Casca Grossa" src="img/card_casca_grossa_x6.png" /> <strong>Casca Grossa</strong></td>
+<td>1</td>
+<td>Planta</td>
+<td>Skill</td>
+<td>8 de escudo</td>
+<td>11</td>
+</tr>
+<tr>
+<td><img alt="Onda" src="img/card_onda_x6.png" /> <strong>Onda</strong></td>
+<td>2</td>
+<td>Água</td>
+<td>Ataque em área</td>
+<td>5 de dano em <strong>todos</strong> os inimigos</td>
+<td>8</td>
+</tr>
+<tr>
+<td><img alt="Respingo" src="img/card_respingo_x6.png" /> <strong>Respingo</strong></td>
+<td>1</td>
+<td>Água</td>
+<td>Ataque + skill</td>
+<td>4 de dano e <strong>Fraco 1</strong></td>
+<td>6 e Fraco 2</td>
+</tr>
+<tr>
+<td><img alt="Golpe Duplo" src="img/card_golpe_duplo_x6.png" /> <strong>Golpe Duplo</strong></td>
+<td>1</td>
+<td>Neutro</td>
+<td>Ataque</td>
+<td>4 de dano <strong>duas vezes</strong></td>
+<td>5 duas vezes</td>
+</tr>
+<tr>
+<td><img alt="Seiva" src="img/card_seiva_x6.png" /> <strong>Seiva</strong></td>
+<td>1</td>
+<td>Planta</td>
+<td>Skill</td>
+<td><strong>Cura 6</strong>. Esgota</td>
+<td>Cura 9</td>
+</tr>
+<tr>
+<td><img alt="Golpe Pesado" src="img/card_golpe_pesado_x6.png" /> <strong>Golpe Pesado</strong></td>
+<td>2</td>
+<td>Neutro</td>
+<td>Ataque</td>
+<td>14 de dano</td>
+<td>18</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Combinações que valem a pena:</strong> <em>Respingo</em> deixa um inimigo Fraco (−25% de dano) e ainda dá dano de Água; <em>Brasa</em> ataca ao longo do tempo e ignora escudo; <em>Investida</em> atordoa o inimigo mais perigoso e o faz perder o turno; <em>Onda</em> acaba com grupos de 3 slimes; <em>Golpe Duplo</em> é ótimo com a Força do Pincel Afiado, porque a Força soma em <strong>cada</strong> golpe.</p>
+</section><section class="page"><h2>9. As casas do tabuleiro</h2>
+<p>O tabuleiro tem <strong>12 casas</strong>, duas <strong>bifurcações</strong> (que voltam a se juntar) e o Chefe no fim.</p>
+<table>
+<thead>
+<tr>
+<th>Casa</th>
+<th>Ícone</th>
+<th>O que acontece</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Início</strong></td>
+<td><img alt="Início" src="img/tile_start_x6.png" /></td>
+<td>Ponto de partida. Nada acontece.</td>
+</tr>
+<tr>
+<td><strong>Batalha</strong> (5)</td>
+<td><img alt="Batalha" src="img/tile_battle_x6.png" /></td>
+<td>De 1 a 3 slimes. Vencendo: 10 a 15 moedas e 1 carta à escolha.</td>
+</tr>
+<tr>
+<td><strong>Loja</strong> (1)</td>
+<td><img alt="Loja" src="img/tile_shop_x6.png" /></td>
+<td>Compre cartas, uma relíquia, cura ou remova cartas.</td>
+</tr>
+<tr>
+<td><strong>Descanso</strong> (1)</td>
+<td><img alt="Descanso" src="img/tile_rest_x6.png" /></td>
+<td>Cure <strong>30%</strong> da vida máxima <strong>ou</strong> melhore 1 carta.</td>
+</tr>
+<tr>
+<td><strong>Evento</strong> (2)</td>
+<td><img alt="Evento" src="img/tile_event_x6.png" /></td>
+<td>Uma escolha com risco e recompensa (seção 12).</td>
+</tr>
+<tr>
+<td><strong>Baú</strong> (1)</td>
+<td><img alt="Baú" src="img/tile_chest_x6.png" /></td>
+<td>30 moedas e 1 relíquia aleatória.</td>
+</tr>
+<tr>
+<td><strong>Chefe</strong> (1)</td>
+<td><img alt="Chefe" src="img/tile_boss_x6.png" /></td>
+<td>O Rei Slime. O Peão sempre para aqui.</td>
+</tr>
+</tbody>
+</table>
+<h3>O dado</h3>
+<p><img alt="Face do dado" src="img/dice_face_3_x6.png" /></p>
+<p>O dado do tabuleiro sorteia de <strong>1 a 3</strong>: assim o Peão para em mais casas e a partida tem mais batalhas, eventos e lojas. A <strong>relíquia Dado Viciado</strong> deixa você rolar de novo.</p>
+<h3>Descanso</h3>
+<p><img alt="Descanso" src="screenshots/tela_rest.png" /></p>
+<h3>Loja</h3>
+<p><img alt="Loja" src="screenshots/tela_shop.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3 cartas</td>
+<td>50 moedas cada</td>
+</tr>
+<tr>
+<td>1 relíquia</td>
+<td>100 moedas</td>
+</tr>
+<tr>
+<td>Cura de 15 de vida</td>
+<td>35 moedas</td>
+</tr>
+<tr>
+<td>Remover 1 carta do deck</td>
+<td>60 moedas</td>
+</tr>
+</tbody>
+</table>
+<p>Itens comprados somem da prateleira. Cura não vende com a vida cheia; remover carta não vende se o deck tiver só 1 carta.</p>
+<h3>Baú</h3>
+<p><img alt="Baú" src="screenshots/tela_chest.png" /></p>
+<h3>Recompensa de batalha</h3>
+<p><img alt="Recompensa" src="screenshots/tela_reward.png" /></p>
+<h3>Seu baralho</h3>
+<p>O botão <strong>Ver deck</strong> abre o painel com todas as suas cartas.</p>
+<p><img alt="Ver deck" src="screenshots/tela_deck.png" /></p>
+</section><section class="page"><h2>10. Relíquias</h2>
+<p>Relíquias são tesouros permanentes: valem até o fim da partida. Elas aparecem na barra do topo do tabuleiro (passe o mouse para ler a descrição). Você as ganha no <strong>Baú</strong>, na <strong>Loja</strong> e em eventos.</p>
+<table>
+<thead>
+<tr>
+<th>Ícone</th>
+<th>Relíquia</th>
+<th>Efeito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Dado Viciado" src="img/relic_dado_viciado_x8.png" /></td>
+<td><strong>Dado Viciado</strong></td>
+<td>Pode <strong>rolar o dado de novo</strong> (1 vez por rolagem).</td>
+</tr>
+<tr>
+<td><img alt="Base de Chumbo" src="img/relic_base_de_chumbo_x8.png" /></td>
+<td><strong>Base de Chumbo</strong></td>
+<td>Começa toda batalha com <strong>5 de escudo</strong>.</td>
+</tr>
+<tr>
+<td><img alt="Tinta Seca" src="img/relic_tinta_seca_x8.png" /></td>
+<td><strong>Tinta Seca</strong></td>
+<td>Ao <strong>matar um inimigo</strong>, cura <strong>3</strong> de vida.</td>
+</tr>
+<tr>
+<td><img alt="Pincel Afiado" src="img/relic_pincel_afiado_x8.png" /></td>
+<td><strong>Pincel Afiado</strong></td>
+<td>Começa toda batalha com <strong>1 de Força</strong>.</td>
+</tr>
+<tr>
+<td><img alt="Ampulheta de Bolso" src="img/relic_ampulheta_de_bolso_x8.png" /></td>
+<td><strong>Ampulheta de Bolso</strong></td>
+<td>No <strong>primeiro turno</strong> de cada batalha, <strong>+1 de energia</strong>.</td>
+</tr>
+</tbody>
+</table>
+</section><section class="page"><h2>11. Moedas</h2>
+<p><img alt="Moeda" src="img/coin_x8.png" /> Ganhas depois de cada batalha (10 a 15) e no baú (30). Servem para comprar na loja. O contador fica no canto superior do tabuleiro, ao lado da vida.</p>
+</section><section class="page"><h2>12. Eventos</h2>
+<p>As duas casas de <strong>Evento</strong> sorteiam 2 dos 3 eventos abaixo, sem repetir. Cada um tem duas escolhas.</p>
+<p><img alt="Evento Poça de Tinta" src="screenshots/tela_event.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Evento</th>
+<th>Escolha A</th>
+<th>Escolha B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Poça de Tinta</strong></td>
+<td>Beber: perde 6 de vida e ganha 1 carta aleatória <strong>já melhorada</strong></td>
+<td>Seguir em frente</td>
+</tr>
+<tr>
+<td><strong>Dado Gigante</strong></td>
+<td>Rolar 1d6: 1-2 perde 8 de vida; 3-4 ganha 30 moedas; 5-6 ganha 1 relíquia</td>
+<td>Não rolar</td>
+</tr>
+<tr>
+<td><strong>Fonte de Feltro</strong></td>
+<td>Beber: cura 12 de vida</td>
+<td>Remover 1 carta do deck</td>
+</tr>
+</tbody>
+</table>
+<p>Perder vida num evento <strong>nunca mata</strong>: no pior caso sobra 1 de vida.</p>
+</section><section class="page"><h2>13. Vitória e derrota</h2>
+<p><strong>Vitória:</strong> derrote o Rei Slime. A tinta seca, o Peão comemora e aparece a tela de vitória com os créditos.</p>
+<p><img alt="Tela de vitória" src="screenshots/tela_vitoria.png" /></p>
+<p><strong>Derrota:</strong> se sua vida chegar a zero em <strong>qualquer batalha</strong>, a partida acaba. Você pode <strong>Tentar de novo</strong> (nova partida do zero) ou <strong>Voltar ao título</strong>. Não há save: cada partida começa do zero, e é isso que torna cada uma diferente.</p>
+<p><img alt="Tela de derrota" src="screenshots/tela_derrota.png" /></p>
+<h3>Pausa</h3>
+<p>Aperte <strong>Esc</strong> no tabuleiro ou na batalha.</p>
+<p><img alt="Pausa" src="screenshots/tela_pause.png" /></p>
+</section><section class="page"><h2>14. Dicas</h2>
+<ul>
+<li><strong>Leia as intenções.</strong> Se o inimigo vai atacar com 7, vale mais gastar energia em escudo do que em dano.</li>
+<li><strong>Atordoe o que dói.</strong> A <em>Investida</em> faz o inimigo perder a ação do turno. Use-a no que causa mais dano.</li>
+<li><strong>Explore o ciclo de elementos.</strong> Um golpe eficaz vale +50%. Uma Bola de Fogo (7) em Planta causa 10.</li>
+<li><strong>Mate primeiro o Azul.</strong> Ele cura os aliados e prolonga a luta; ataque-o antes se for seguro.</li>
+<li><strong>Cuidado com a Queimadura.</strong> Ela ignora o escudo; contra o Vermelho, mantenha a vida alta.</li>
+<li><strong>No Chefe, fogo nos Mirins e no Rei.</strong> Todos são de Planta. Brasa no Rei causa dano a cada turno sem você gastar mais energia.</li>
+<li><strong>O Rei se enfurece abaixo de 50%.</strong> Termine a luta com escudo de sobra ou use Respingo (Fraco) para cortar o dano dele.</li>
+<li><strong>Descanso: cure ou melhore?</strong> Melhorar a <em>Investida</em> ou o <em>Golpe Pesado</em> costuma render mais a longo prazo; cure se estiver abaixo de metade da vida.</li>
+<li><strong>Remova cartas fracas.</strong> Menos cartas no baralho significa comprar as boas mais vezes (<em>Fonte de Feltro</em> ou Loja).</li>
+<li><strong>Aproveite o Baú e a Loja.</strong> As bifurcações deixam você escolher: um lado tem Baú, o outro tem uma Batalha extra.</li>
+</ul>
+</section><section class="page"><h2>15. Créditos</h2>
+<p><strong>Design, programação e documentação:</strong> Márcio Dias de Lima Filho e Tiago Augusto Dal'Acqua Gonçalves.
+<strong>Arte:</strong> gerada no PixelLab e selecionada e ajustada pela equipe. <strong>Sons e músicas:</strong> sintetizados pela equipe (obra própria, CC0). <strong>Fonte:</strong> Press Start 2P (SIL Open Font License 1.1). <strong>Motor:</strong> Unity 6 · C#.</p></section></body></html>
